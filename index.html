@@ -678,92 +678,104 @@
     <!-- =====================================================================
          5 · PORTOFOLIU
          [PERSONALIZEAZĂ · PORTOFOLIU]
-         Cardurile placeholder au deja structura gata (imagine, nume, tip, link).
-         Ca să pui o imagine reală, DECOMENTEAZĂ <img> și șterge .thumb-placeholder,
-         sau lasă <img src="..."> — placeholderul se ascunde automat dacă imaginea se încarcă.
+         Fiecare card are deja imaginea legată prin <img src="images/xxx.jpg">.
+         Trebuie doar să pui fișierele în folderul  images/  cu aceste nume:
+             images/toroscarol.jpg   images/sturz.jpg
+             images/magnumteam.jpg   images/emilys.jpg
+         Recomandat: capturi ~1200×750 px (raport 16:10), JPG.
+         Cât timp fișierul lipsește, se afișează automat un placeholder discret
+         (imaginea „ruptă" se ascunde singură prin onerror). Când adaugi fișierul,
+         apare imaginea și dispare placeholderul (prin onload).
          ===================================================================== -->
     <section class="portfolio" id="portofoliu">
       <div class="container">
         <div class="section-head">
           <p class="eyebrow reveal">Portofoliu</p>
           <h2 class="reveal">Lucrări & <em>dovezi</em></h2>
-          <p class="reveal">Cel mai bun exemplu de cum lucrez e chiar site-ul meu. Urmează proiectele clienților.</p>
+          <p class="reveal">Câteva dintre site-urile pe care le-am construit — de la cabinete de psihologie la magazine online. Cel mai bun exemplu de cum lucrez e chiar site-ul meu.</p>
         </div>
 
         <div class="portfolio-grid">
-          <!-- CARD PRINCIPAL — site-ul tău, ca dovadă centrală -->
+          <!-- CARD PRINCIPAL — toroscarol.ro (site-ul propriu, ca dovadă centrală) -->
           <article class="work-card feature reveal">
             <div class="work-thumb">
-              <!-- [PERSONALIZEAZĂ · PORTOFOLIU] Pune o captură a site-ului tău, ex. images/toroscarol.jpg -->
-              <!-- <img src="images/toroscarol.jpg" alt="Captură din site-ul toroscarol.ro" onload="this.previousElementSibling && this.previousElementSibling.remove()"> -->
               <div class="thumb-placeholder">
                 <span class="ph-icon" aria-hidden="true">
                   <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="10" width="34" height="28" rx="3"/><circle cx="17" cy="20" r="3"/><path d="M41 30l-9-8-13 12"/></svg>
                 </span>
-                <small>captură toroscarol.ro</small>
+                <small>images/toroscarol.jpg</small>
               </div>
+              <!-- [PERSONALIZEAZĂ · PORTOFOLIU] pune fișierul images/toroscarol.jpg -->
+              <img src="images/toroscarol.jpg" alt="Captură din site-ul toroscarol.ro" loading="lazy"
+                   onload="this.previousElementSibling && this.previousElementSibling.remove()"
+                   onerror="this.remove()" />
             </div>
             <div class="work-body">
               <span class="badge feature-tag">Proiect propriu</span>
-              <span class="work-type">Site de prezentare · Psihologie clinică</span>
+              <span class="work-type">Site de prezentare · Psihologie</span>
               <h3>toroscarol.ro</h3>
               <p>Site-ul meu de cabinet — exact genul de prezență online pe care ți-o construiesc. Textul, structura și designul sunt gândite pentru un psiholog la început de drum, așa cum ești tu.</p>
-              <!-- [PERSONALIZEAZĂ · LINK] confirmă adresa -->
               <a class="work-link" href="https://toroscarol.ro" target="_blank" rel="noopener">Vizitează site-ul <span class="arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
 
-          <!-- PLACEHOLDER 1 — completează cu primul proiect client -->
+          <!-- sturz.ro — programe educaționale & terapeutice -->
           <article class="work-card reveal">
             <div class="work-thumb">
-              <!-- [PERSONALIZEAZĂ · PORTOFOLIU] <img src="images/proiect-1.jpg" alt="Descriere proiect 1" onload="this.previousElementSibling && this.previousElementSibling.remove()"> -->
               <div class="thumb-placeholder">
                 <span class="ph-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="10" width="34" height="28" rx="3"/><circle cx="17" cy="20" r="3"/><path d="M41 30l-9-8-13 12"/></svg></span>
-                <small>în curând</small>
+                <small>images/sturz.jpg</small>
               </div>
+              <!-- [PERSONALIZEAZĂ · PORTOFOLIU] pune fișierul images/sturz.jpg -->
+              <img src="images/sturz.jpg" alt="Captură din site-ul sturz.ro" loading="lazy"
+                   onload="this.previousElementSibling && this.previousElementSibling.remove()"
+                   onerror="this.remove()" />
             </div>
             <div class="work-body">
-              <span class="work-type">Site de prezentare</span>
-              <h3>Proiect client</h3>
-              <p>Locul primului tău proiect. Înlocuiește numele, tipul și imaginea când e gata.</p>
-              <!-- [PERSONALIZEAZĂ · LINK] -->
-              <a class="work-link" href="#" aria-disabled="true">În curând <span class="arrow" aria-hidden="true">→</span></a>
+              <span class="work-type">Site + programe · Educație</span>
+              <h3>sturz.ro</h3>
+              <p>Platformă de prezentare pentru programe educaționale și terapeutice — structură clară pentru profesioniști, părinți și copii, cu blog și înscrieri.</p>
+              <a class="work-link" href="https://sturz.ro" target="_blank" rel="noopener">Vizitează site-ul <span class="arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
 
-          <!-- PLACEHOLDER 2 -->
+          <!-- magnumteam.ro — club de dans -->
           <article class="work-card reveal">
             <div class="work-thumb">
-              <!-- [PERSONALIZEAZĂ · PORTOFOLIU] <img src="images/proiect-2.jpg" alt="Descriere proiect 2" onload="this.previousElementSibling && this.previousElementSibling.remove()"> -->
               <div class="thumb-placeholder">
                 <span class="ph-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="10" width="34" height="28" rx="3"/><circle cx="17" cy="20" r="3"/><path d="M41 30l-9-8-13 12"/></svg></span>
-                <small>în curând</small>
+                <small>images/magnumteam.jpg</small>
               </div>
+              <!-- [PERSONALIZEAZĂ · PORTOFOLIU] pune fișierul images/magnumteam.jpg -->
+              <img src="images/magnumteam.jpg" alt="Captură din site-ul magnumteam.ro" loading="lazy"
+                   onload="this.previousElementSibling && this.previousElementSibling.remove()"
+                   onerror="this.remove()" />
             </div>
             <div class="work-body">
-              <span class="work-type">Site de prezentare</span>
-              <h3>Proiect client</h3>
-              <p>Al doilea slot din portofoliu. Adaugă captura și link-ul când publici site-ul.</p>
-              <!-- [PERSONALIZEAZĂ · LINK] -->
-              <a class="work-link" href="#" aria-disabled="true">În curând <span class="arrow" aria-hidden="true">→</span></a>
+              <span class="work-type">Site de prezentare · Club de dans</span>
+              <h3>magnumteam.ro</h3>
+              <p>Site energic pentru un club de dans cu tradiție: cursuri, evenimente, competiții și înscrieri online, cu un design plin de mișcare.</p>
+              <a class="work-link" href="https://magnumteam.ro" target="_blank" rel="noopener">Vizitează site-ul <span class="arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
 
-          <!-- PLACEHOLDER 3 -->
+          <!-- emilys.ro — magazin online (e-commerce) -->
           <article class="work-card reveal">
             <div class="work-thumb">
-              <!-- [PERSONALIZEAZĂ · PORTOFOLIU] <img src="images/proiect-3.jpg" alt="Descriere proiect 3" onload="this.previousElementSibling && this.previousElementSibling.remove()"> -->
               <div class="thumb-placeholder">
                 <span class="ph-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="10" width="34" height="28" rx="3"/><circle cx="17" cy="20" r="3"/><path d="M41 30l-9-8-13 12"/></svg></span>
-                <small>în curând</small>
+                <small>images/emilys.jpg</small>
               </div>
+              <!-- [PERSONALIZEAZĂ · PORTOFOLIU] pune fișierul images/emilys.jpg -->
+              <img src="images/emilys.jpg" alt="Captură din magazinul online emilys.ro" loading="lazy"
+                   onload="this.previousElementSibling && this.previousElementSibling.remove()"
+                   onerror="this.remove()" />
             </div>
             <div class="work-body">
-              <span class="work-type">Site de prezentare</span>
-              <h3>Proiect client</h3>
-              <p>Al treilea slot. Pe măsură ce crește portofoliul, poți adăuga carduri noi copiind structura.</p>
-              <!-- [PERSONALIZEAZĂ · LINK] -->
-              <a class="work-link" href="#" aria-disabled="true">În curând <span class="arrow" aria-hidden="true">→</span></a>
+              <span class="work-type">Magazin online · E-commerce</span>
+              <h3>emilys.ro</h3>
+              <p>Magazin online pentru genți handmade — listare de produse, prețuri, reduceri și coș de cumpărături, cu accent pe fotografia de produs.</p>
+              <a class="work-link" href="https://emilys.ro" target="_blank" rel="noopener">Vizitează site-ul <span class="arrow" aria-hidden="true">→</span></a>
             </div>
           </article>
         </div>
