@@ -1,0 +1,1117 @@
+<!--
+  =====================================================================
+  Carol Toros — Site de prezentare pentru psihologi
+  One-page website (single scroll page + anchor navigation)
+  ---------------------------------------------------------------------
+  Fișier unic, self-contained (HTML + CSS + JS în același fișier).
+  Fără build, fără framework. Îl poți urca direct prin FTP în public_html.
+
+  ✦ CE TREBUIE SĂ PERSONALIZEZI (caută în cod comentariile [PERSONALIZEAZĂ]):
+    1. Endpoint-ul formularului Formspree  → caută: [PERSONALIZEAZĂ · FORMSPREE]
+    2. Imaginile din portofoliu            → caută: [PERSONALIZEAZĂ · PORTOFOLIU]
+    3. Datele de contact (email, telefon)  → caută: [PERSONALIZEAZĂ · CONTACT]
+    4. Link-urile proiectelor              → caută: [PERSONALIZEAZĂ · LINK]
+  Textele sunt aproape finale — le poți rafina oriunde în corpul paginii.
+  =====================================================================
+-->
+<!DOCTYPE html>
+<!-- lang="ro" pentru limbă corectă (SEO + accesibilitate / screen readers) -->
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============ SEO DE BAZĂ ============ -->
+  <title>Carol Toros · Site-uri de prezentare pentru psihologi și psihoterapeuți</title>
+  <meta name="description" content="Creez site-uri de prezentare pentru psihologi și psihoterapeuți la început de drum. Scriu eu textele, în română. Pachet complet 320 €. Sunt psiholog, ca tine." />
+  <meta name="author" content="Carol Toros" />
+  <!-- Open Graph — pentru cum arată link-ul când îl distribui pe Facebook/WhatsApp.
+       [PERSONALIZEAZĂ · LINK] înlocuiește URL-ul cu domeniul tău final. -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Carol Toros · Site-uri pentru psihologi" />
+  <meta property="og:description" content="Site de prezentare pentru cabinetul tău. Scriu eu textele, te ghidez pas cu pas. 320 €." />
+  <meta property="og:locale" content="ro_RO" />
+  <!-- <meta property="og:url" content="https://domeniul-tau.ro" /> -->
+  <!-- <meta property="og:image" content="https://domeniul-tau.ro/og-image.jpg" /> -->
+
+  <!-- Favicon minimal: brand-mark line-art (creier stilizat) ca SVG inline, fără fișier extern -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='10' fill='%23FAF7F2'/%3E%3Cg fill='none' stroke='%238A9B7A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M24 12c-4-2-9-1-11 3-4 0-6 4-4 7-3 2-3 7 1 9 0 4 4 6 8 5'/%3E%3Cpath d='M24 12c4-2 9-1 11 3 4 0 6 4 4 7 3 2 3 7-1 9 0 4-4 6-8 5'/%3E%3Cpath d='M24 12v25'/%3E%3C/g%3E%3C/svg%3E" />
+
+  <!-- ============ FONTURI ============
+       Playfair Display (titluri, logotype, citate) din Google Fonts.
+       Helvetica (fallback Arial) pentru corp/navigație/butoane = font de sistem, fără request. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet" />
+
+  <!-- Failsafe: dacă JavaScript e dezactivat, conținutul cu animație de scroll
+       rămâne vizibil (nu-l lăsăm ascuns). -->
+  <noscript>
+    <style>.reveal { opacity: 1 !important; transform: none !important; }</style>
+  </noscript>
+
+  <style>
+    /* =====================================================================
+       BRAND · variabile de design
+       (Dacă îmi trimiți fișierul design-system, înlocuiesc hex-urile de aici.)
+       ===================================================================== */
+    :root {
+      --bg:         #FAF7F2;  /* fundal crem cald / off-white            */
+      --bg-alt:     #F4EFE6;  /* crem puțin mai adânc, pt. ritm vizual   */
+      --card:       #FFFFFF;  /* carduri albe                            */
+      --sage:       #8A9B7A;  /* UNICUL accent — verde salvie muted      */
+      --sage-dark:  #6E7F5E;  /* varianta închisă pt. hover / contrast   */
+      --sage-tint:  #EAEEE2;  /* fundal foarte deschis pt. badge-uri     */
+      --ink:        #2B2926;  /* titluri, near-black cald                */
+      --body:       #6B6560;  /* text de corp, gri cald                  */
+      --line:       #E7E0D5;  /* borduri subtile                         */
+
+      --shadow-sm:  0 1px 2px rgba(43,41,38,.04), 0 1px 3px rgba(43,41,38,.03);
+      --shadow-md:  0 14px 34px -16px rgba(43,41,38,.16);
+      --shadow-lg:  0 30px 70px -24px rgba(43,41,38,.22);
+
+      --radius:     22px;   /* colțuri carduri                           */
+      --pill:       999px;  /* butoane & badge-uri complet rotunjite     */
+
+      --serif: "Playfair Display", Georgia, "Times New Roman", serif;
+      --sans:  Helvetica, Arial, "Helvetica Neue", system-ui, sans-serif;
+
+      --maxw:  1120px;      /* lățime maximă conținut                    */
+      --readw: 680px;       /* lățime confortabilă pt. paragrafe lungi   */
+      --nav-h: 74px;
+    }
+
+    /* =====================================================================
+       RESET & BAZĂ
+       ===================================================================== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;               /* scroll lin la ancore     */
+      scroll-padding-top: calc(var(--nav-h) + 12px); /* nu ascunde titlul sub nav */
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: var(--sans);
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--body);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, .serif { font-family: var(--serif); color: var(--ink); font-weight: 600; line-height: 1.15; letter-spacing: -0.01em; }
+
+    /* Semnătura tipografică: cuvânt-cheie italic verde salvie în interiorul titlului serif */
+    em, .accent-italic { font-style: italic; color: var(--sage); font-weight: 500; }
+
+    a { color: var(--sage-dark); text-decoration: none; transition: color .2s ease; }
+    a:hover { color: var(--ink); }
+
+    img { max-width: 100%; display: block; }
+
+    /* Focus vizibil, accesibil, pe tot ce e interactiv */
+    a:focus-visible, button:focus-visible, input:focus-visible,
+    textarea:focus-visible, summary:focus-visible {
+      outline: 2px solid var(--sage);
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+
+    /* Container standard */
+    .container { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: 24px; }
+
+    /* Ritm secțiuni */
+    section { padding-block: clamp(64px, 9vw, 118px); }
+    .section-alt { background: var(--bg-alt); }
+
+    /* Etichetă mică deasupra titlurilor (eyebrow) */
+    .eyebrow {
+      display: inline-block;
+      font-family: var(--sans);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--sage-dark);
+      margin-bottom: 18px;
+    }
+
+    .section-head { max-width: var(--readw); margin-inline: auto; text-align: center; margin-bottom: clamp(38px, 5vw, 60px); }
+    .section-head h2 { font-size: clamp(1.9rem, 3.6vw, 2.75rem); }
+    .section-head p { margin-top: 16px; font-size: 1.08rem; }
+
+    /* =====================================================================
+       BUTOANE & BADGE-URI (pill — colțuri complet rotunjite)
+       ===================================================================== */
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--sans); font-size: .98rem; font-weight: 600;
+      padding: 14px 28px; border-radius: var(--pill);
+      border: 1px solid transparent; cursor: pointer;
+      transition: transform .18s ease, box-shadow .22s ease, background .2s ease, color .2s ease, border-color .2s ease;
+      white-space: nowrap; text-align: center;
+    }
+    .btn-primary { background: var(--sage); color: #fff; box-shadow: 0 10px 24px -12px rgba(138,155,122,.9); }
+    .btn-primary:hover { background: var(--sage-dark); color: #fff; transform: translateY(-2px); box-shadow: 0 16px 30px -12px rgba(110,127,94,.85); }
+    .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+    .btn-ghost:hover { border-color: var(--sage); color: var(--sage-dark); transform: translateY(-2px); background: #fff; }
+    .btn-block { width: 100%; justify-content: center; }
+    .btn .arrow { transition: transform .2s ease; }
+    .btn:hover .arrow { transform: translateX(3px); }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--sage-tint); color: var(--sage-dark);
+      font-size: .82rem; font-weight: 600; letter-spacing: .01em;
+      padding: 8px 16px; border-radius: var(--pill);
+      border: 1px solid rgba(138,155,122,.22);
+    }
+
+    /* Brain-mark line-art (semn de brand) */
+    .brainmark { display: inline-block; color: var(--sage); }
+    .brainmark svg { display: block; }
+
+    /* =====================================================================
+       NAVIGAȚIE FIXĂ
+       ===================================================================== */
+    .nav {
+      position: fixed; inset: 0 0 auto 0; z-index: 100;
+      height: var(--nav-h);
+      display: flex; align-items: center;
+      background: rgba(250,247,242,.72);
+      backdrop-filter: saturate(180%) blur(14px);
+      -webkit-backdrop-filter: saturate(180%) blur(14px);
+      border-bottom: 1px solid transparent;
+      transition: border-color .25s ease, box-shadow .25s ease, background .25s ease;
+    }
+    .nav.scrolled { border-bottom-color: var(--line); box-shadow: var(--shadow-sm); }
+    .nav .container { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+
+    .logo { display: inline-flex; align-items: center; gap: 11px; font-family: var(--serif); font-size: 1.32rem; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+    .logo:hover { color: var(--ink); }
+    .logo .brainmark { width: 30px; }
+
+    .nav-links { display: flex; align-items: center; gap: 4px; list-style: none; }
+    .nav-links a {
+      font-family: var(--sans); font-size: .95rem; font-weight: 500; color: var(--body);
+      padding: 9px 14px; border-radius: var(--pill); transition: color .2s ease, background .2s ease;
+    }
+    .nav-links a:hover { color: var(--ink); background: rgba(138,155,122,.10); }
+    .nav-links a.active { color: var(--sage-dark); font-weight: 600; }
+    /* CTA-ul din listă apare DOAR în meniul mobil; pe desktop e ascuns (există .btn-nav) */
+    .nav-links .btn-primary { display: none; }
+    .nav-links .btn-primary:hover { color: #fff; background: var(--sage-dark); }
+
+    .nav-cta { display: flex; align-items: center; gap: 12px; }
+    .nav-cta .btn { padding: 11px 22px; }
+
+    /* Buton hamburger (doar pe mobil) */
+    .nav-toggle {
+      display: none; width: 44px; height: 44px; border: 1px solid var(--line);
+      background: #fff; border-radius: 12px; cursor: pointer; align-items: center; justify-content: center;
+    }
+    .nav-toggle span, .nav-toggle span::before, .nav-toggle span::after {
+      content: ""; display: block; width: 20px; height: 2px; background: var(--ink); border-radius: 2px;
+      transition: transform .25s ease, opacity .2s ease;
+    }
+    .nav-toggle span { position: relative; }
+    .nav-toggle span::before { position: absolute; top: -6px; }
+    .nav-toggle span::after  { position: absolute; top: 6px; }
+    .nav.open .nav-toggle span { background: transparent; }
+    .nav.open .nav-toggle span::before { transform: translateY(6px) rotate(45deg); }
+    .nav.open .nav-toggle span::after  { transform: translateY(-6px) rotate(-45deg); }
+
+    /* =====================================================================
+       HERO
+       ===================================================================== */
+    .hero { position: relative; padding-top: calc(var(--nav-h) + clamp(48px, 8vw, 92px)); padding-bottom: clamp(56px, 8vw, 104px); text-align: center; overflow: hidden; }
+    /* Brain-mark uriaș, foarte discret, ca textură de fundal */
+    .hero-glow { position: absolute; top: -6%; left: 50%; transform: translateX(-50%); width: min(560px, 90vw); color: var(--sage); opacity: .07; pointer-events: none; z-index: 0; }
+    .hero .container { position: relative; z-index: 1; }
+    .hero .badge { margin-bottom: 26px; }
+    .hero h1 { font-size: clamp(2.4rem, 5.2vw, 4.05rem); max-width: 15ch; margin-inline: auto; }
+    .hero .subtitle { max-width: 54ch; margin: 26px auto 0; font-size: clamp(1.08rem, 1.7vw, 1.28rem); color: var(--body); }
+    .hero-actions { margin-top: 38px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .hero-note { margin-top: 22px; font-size: .92rem; color: var(--body); opacity: .85; }
+    .hero-note strong { color: var(--sage-dark); font-weight: 600; }
+
+    /* =====================================================================
+       EMPATIE / PROBLEMĂ
+       ===================================================================== */
+    .empathy { text-align: center; }
+    .empathy h2 { font-size: clamp(1.7rem, 3.2vw, 2.5rem); max-width: 20ch; margin: 0 auto 14px; }
+    .empathy .lead { max-width: var(--readw); margin: 0 auto clamp(40px, 5vw, 56px); }
+    .empathy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .empathy-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 34px 28px; box-shadow: var(--shadow-sm); text-align: left; }
+    .empathy-card .num { font-family: var(--serif); font-style: italic; font-size: 1.5rem; color: var(--sage); margin-bottom: 12px; }
+    .empathy-card h3 { font-size: 1.18rem; margin-bottom: 10px; }
+    .empathy-card p { font-size: .98rem; }
+
+    /* =====================================================================
+       OFERTĂ (card central cu preț)
+       ===================================================================== */
+    .offer .container { display: flex; justify-content: center; }
+    .offer-card {
+      width: 100%; max-width: 720px; background: var(--card);
+      border: 1px solid var(--line); border-radius: 28px;
+      box-shadow: var(--shadow-lg); overflow: hidden;
+    }
+    .offer-top { padding: clamp(34px, 5vw, 52px); text-align: center; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, #fff 0%, #FDFCFA 100%); }
+    .offer-top .badge { margin-bottom: 20px; }
+    .offer-top h2 { font-size: clamp(1.9rem, 3.4vw, 2.6rem); }
+    .offer-top .offer-sub { margin-top: 12px; max-width: 46ch; margin-inline: auto; }
+    .price { display: flex; align-items: baseline; justify-content: center; gap: 8px; margin-top: 26px; }
+    .price .amount { font-family: var(--serif); font-weight: 700; font-size: clamp(3rem, 7vw, 4.4rem); color: var(--ink); line-height: 1; }
+    .price .cur { font-family: var(--serif); font-size: 1.8rem; color: var(--sage); }
+    .price .once { font-size: .95rem; color: var(--body); margin-left: 4px; }
+
+    .offer-body { padding: clamp(30px, 4vw, 46px); }
+    .offer-body h3 { font-family: var(--sans); font-size: .82rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--sage-dark); text-align: center; margin-bottom: 26px; }
+    .includes { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 15px 30px; }
+    .includes li { display: flex; gap: 12px; align-items: flex-start; font-size: 1rem; color: var(--ink); }
+    .includes li svg { flex: none; margin-top: 3px; color: var(--sage); }
+    .includes li span { color: var(--body); }
+    .includes li b { color: var(--ink); font-weight: 600; }
+
+    .offer-foot { margin-top: 32px; text-align: center; }
+    .offer-foot .btn { padding: 16px 40px; font-size: 1.05rem; }
+    .offer-note { margin-top: 20px; font-size: .9rem; color: var(--body); max-width: 52ch; margin-inline: auto; background: var(--sage-tint); border-radius: 16px; padding: 14px 20px; }
+    .offer-note strong { color: var(--sage-dark); font-weight: 600; }
+
+    /* =====================================================================
+       CUM DECURGE (proces în pași)
+       ===================================================================== */
+    .steps-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; }
+    .step { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 30px 24px; box-shadow: var(--shadow-sm); }
+    .step .step-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 44px; height: 44px; border-radius: var(--pill);
+      background: var(--sage-tint); color: var(--sage-dark);
+      font-family: var(--serif); font-weight: 700; font-size: 1.15rem; margin-bottom: 18px;
+      border: 1px solid rgba(138,155,122,.24);
+    }
+    .step h3 { font-size: 1.12rem; margin-bottom: 9px; }
+    .step p { font-size: .95rem; }
+
+    /* =====================================================================
+       PORTOFOLIU
+       ===================================================================== */
+    .portfolio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+    /* Cardul principal (toroscarol.ro) ocupă toată lățimea, ca dovadă centrală */
+    .work-card { grid-column: span 1; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); transition: transform .22s ease, box-shadow .25s ease; display: flex; flex-direction: column; }
+    .work-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+    .work-card.feature { grid-column: 1 / -1; flex-direction: row; }
+    .work-thumb { position: relative; aspect-ratio: 16/10; background: linear-gradient(135deg, #EEF1E9 0%, #E4E9DC 100%); overflow: hidden; }
+    .work-card.feature .work-thumb { aspect-ratio: auto; width: 54%; min-height: 300px; }
+    .work-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    /* Placeholder vizual când nu ai încă imaginea (se ascunde automat dacă pui <img>) */
+    .thumb-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--sage-dark); text-align: center; padding: 20px; }
+    .thumb-placeholder .brainmark { width: 46px; opacity: .5; }
+    .thumb-placeholder small { font-size: .82rem; opacity: .8; letter-spacing: .02em; }
+    .work-body { padding: 26px 28px; flex: 1; display: flex; flex-direction: column; }
+    .work-card.feature .work-body { justify-content: center; }
+    .work-type { font-size: .76rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--sage-dark); }
+    .work-body h3 { font-size: 1.35rem; margin: 10px 0; }
+    .work-card.feature .work-body h3 { font-size: clamp(1.5rem, 2.6vw, 2rem); }
+    .work-body p { font-size: .97rem; margin-bottom: 18px; }
+    .work-link { margin-top: auto; display: inline-flex; align-items: center; gap: 7px; font-weight: 600; font-size: .95rem; color: var(--sage-dark); }
+    .work-link:hover { color: var(--ink); }
+    .work-link .arrow { transition: transform .2s ease; }
+    .work-link:hover .arrow { transform: translateX(3px); }
+    .feature-tag { display: inline-flex; width: fit-content; margin-bottom: 14px; }
+
+    /* Rând secundar „și materiale clinice" */
+    .resources-row { margin-top: 28px; }
+    .resources-card {
+      display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+      background: var(--sage-tint); border: 1px solid rgba(138,155,122,.24);
+      border-radius: var(--radius); padding: 24px 30px;
+    }
+    .resources-card .brainmark { width: 40px; flex: none; }
+    .resources-card .rc-text { flex: 1; min-width: 240px; }
+    .resources-card .rc-text h3 { font-size: 1.12rem; margin-bottom: 4px; }
+    .resources-card .rc-text p { font-size: .95rem; }
+
+    /* =====================================================================
+       DESPRE MINE
+       ===================================================================== */
+    .about .container { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(36px, 6vw, 72px); align-items: center; }
+    .about-portrait { position: relative; }
+    .about-portrait .frame {
+      aspect-ratio: 4/5; border-radius: 28px; overflow: hidden;
+      background: linear-gradient(135deg, #EEF1E9 0%, #E4E9DC 100%);
+      border: 1px solid var(--line); box-shadow: var(--shadow-md);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .about-portrait .frame img { width: 100%; height: 100%; object-fit: cover; }
+    .about-portrait .ph { display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--sage-dark); text-align: center; padding: 24px; }
+    .about-portrait .ph .brainmark { width: 56px; opacity: .55; }
+    .about-text h2 { font-size: clamp(1.9rem, 3.4vw, 2.7rem); margin-bottom: 22px; }
+    .about-text p { margin-bottom: 18px; }
+    .about-text p:last-of-type { margin-bottom: 0; }
+    .about-quote { font-family: var(--serif); font-style: italic; font-size: clamp(1.3rem, 2.4vw, 1.7rem); color: var(--ink); line-height: 1.4; border-left: 3px solid var(--sage); padding-left: 22px; margin: 28px 0; }
+    .about-quote span { color: var(--sage); }
+    .about-sign { margin-top: 26px; display: flex; align-items: center; gap: 14px; }
+    .about-sign .brainmark { width: 34px; }
+    .about-sign strong { font-family: var(--serif); font-size: 1.1rem; color: var(--ink); font-weight: 600; }
+    .about-sign small { display: block; font-size: .88rem; color: var(--body); }
+
+    /* =====================================================================
+       FAQ (acordeon)
+       ===================================================================== */
+    .faq-wrap { max-width: 760px; margin-inline: auto; }
+    .faq-item { border-bottom: 1px solid var(--line); }
+    .faq-item summary {
+      list-style: none; cursor: pointer; padding: 26px 4px;
+      display: flex; align-items: center; justify-content: space-between; gap: 20px;
+      font-family: var(--serif); font-size: clamp(1.1rem, 1.9vw, 1.32rem); color: var(--ink); font-weight: 500;
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item .faq-icon { flex: none; width: 34px; height: 34px; border-radius: var(--pill); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; transition: transform .3s ease, background .2s ease, border-color .2s ease; }
+    .faq-item .faq-icon::before { content: ""; width: 12px; height: 2px; background: var(--sage-dark); position: absolute; }
+    .faq-item .faq-icon::after  { content: ""; width: 2px; height: 12px; background: var(--sage-dark); transition: transform .3s ease, opacity .2s ease; }
+    .faq-item[open] .faq-icon { background: var(--sage); border-color: var(--sage); }
+    .faq-item[open] .faq-icon::before { background: #fff; }
+    .faq-item[open] .faq-icon::after { transform: rotate(90deg); opacity: 0; }
+    .faq-answer { padding: 0 4px 28px; max-width: 62ch; }
+    .faq-answer p { font-size: 1.02rem; }
+
+    /* =====================================================================
+       CONTACT / CTA FINAL
+       ===================================================================== */
+    .contact .container { display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(36px, 6vw, 68px); align-items: start; }
+    .contact-intro h2 { font-size: clamp(2rem, 3.6vw, 2.9rem); margin-bottom: 18px; }
+    .contact-intro p { margin-bottom: 26px; max-width: 42ch; }
+    .contact-details { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+    .contact-details li { display: flex; align-items: center; gap: 14px; }
+    .contact-details .ci { flex: none; width: 44px; height: 44px; border-radius: var(--pill); background: var(--sage-tint); color: var(--sage-dark); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(138,155,122,.24); }
+    .contact-details a, .contact-details span { font-size: 1.05rem; color: var(--ink); }
+    .contact-details small { display: block; font-size: .82rem; color: var(--body); }
+
+    .contact-form { background: var(--card); border: 1px solid var(--line); border-radius: 28px; padding: clamp(28px, 4vw, 40px); box-shadow: var(--shadow-md); }
+    .field { margin-bottom: 20px; }
+    .field label { display: block; font-size: .88rem; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+    .field input, .field textarea {
+      width: 100%; font-family: var(--sans); font-size: 1rem; color: var(--ink);
+      background: #FDFCFA; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px;
+      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .field input:focus, .field textarea:focus { outline: none; border-color: var(--sage); background: #fff; box-shadow: 0 0 0 3px rgba(138,155,122,.14); }
+    .field textarea { resize: vertical; min-height: 130px; }
+    .form-msg { display: none; margin-top: 16px; padding: 14px 18px; border-radius: 14px; font-size: .95rem; }
+    .form-msg.ok { display: block; background: var(--sage-tint); color: var(--sage-dark); border: 1px solid rgba(138,155,122,.3); }
+    .form-msg.err { display: block; background: #FBEFEA; color: #B5573B; border: 1px solid #F0D2C6; }
+    .form-fine { margin-top: 14px; font-size: .82rem; color: var(--body); text-align: center; }
+
+    /* =====================================================================
+       FOOTER
+       ===================================================================== */
+    .footer { background: var(--ink); color: #CFC9C0; padding-block: 46px; }
+    .footer .container { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .footer .logo { color: #fff; font-size: 1.2rem; }
+    .footer .logo .brainmark { color: var(--sage); }
+    .footer a { color: #CFC9C0; }
+    .footer a:hover { color: #fff; }
+    .footer-links { display: flex; gap: 22px; flex-wrap: wrap; font-size: .92rem; }
+    .footer-copy { width: 100%; font-size: .82rem; color: #8F887E; border-top: 1px solid rgba(255,255,255,.08); padding-top: 22px; margin-top: 8px; }
+
+    /* Link „sari la conținut" pt. accesibilitate (screen readers / tastatură) */
+    .skip-link { position: absolute; left: -999px; top: 8px; z-index: 200; background: var(--sage); color: #fff; padding: 10px 18px; border-radius: var(--pill); font-size: .9rem; }
+    .skip-link:focus { left: 16px; color: #fff; }
+
+    /* =====================================================================
+       ANIMAȚIE DISCRETĂ LA SCROLL (reveal). Respectă prefers-reduced-motion.
+       ===================================================================== */
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveal { opacity: 1; transform: none; transition: none; }
+      * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+    }
+
+    /* =====================================================================
+       RESPONSIVE
+       ===================================================================== */
+    @media (max-width: 980px) {
+      .steps-grid { grid-template-columns: repeat(2, 1fr); }
+      .about .container { grid-template-columns: 1fr; }
+      .about-portrait { max-width: 420px; margin-inline: auto; }
+      .contact .container { grid-template-columns: 1fr; }
+      .work-card.feature { flex-direction: column; }
+      .work-card.feature .work-thumb { width: 100%; min-height: 220px; }
+    }
+
+    @media (max-width: 760px) {
+      /* Meniu mobil */
+      .nav-links {
+        position: fixed; inset: var(--nav-h) 0 auto 0;
+        flex-direction: column; align-items: stretch; gap: 2px;
+        background: var(--bg); border-bottom: 1px solid var(--line);
+        padding: 14px 20px 22px; box-shadow: var(--shadow-md);
+        transform: translateY(-12px); opacity: 0; pointer-events: none;
+        transition: transform .25s ease, opacity .25s ease;
+      }
+      .nav.open .nav-links { transform: none; opacity: 1; pointer-events: auto; }
+      .nav-links a { padding: 13px 14px; font-size: 1.02rem; }
+      .nav-toggle { display: inline-flex; }
+      .nav-cta .btn-nav { display: none; } /* butonul din nav dispare pe mobil; e în meniu */
+      .nav-links .btn-primary { display: inline-flex; margin-top: 10px; text-align: center; justify-content: center; }
+
+      .empathy-grid { grid-template-columns: 1fr; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .includes { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .hero-actions .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Accesibilitate: sari direct la conținut -->
+  <a class="skip-link" href="#hero">Sari la conținut</a>
+
+  <!-- =====================================================================
+       NAVIGAȚIE FIXĂ
+       ===================================================================== -->
+  <header class="nav" id="nav">
+    <div class="container">
+      <a href="#hero" class="logo" aria-label="Carol Toros — acasă">
+        <!-- Brain-mark line-art (semn de brand) -->
+        <span class="brainmark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/>
+            <path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/>
+            <path d="M24 11v25"/>
+            <path d="M12.4 14c2.8.4 4.6 2.3 4.9 5.1M35.6 14c-2.8.4-4.6 2.3-4.9 5.1M8.1 21.6c2.7-.2 5 1.2 5.6 3.8M39.9 21.6c-2.7-.2-5 1.2-5.6 3.8"/>
+          </svg>
+        </span>
+        Carol&nbsp;Toros
+      </a>
+
+      <nav aria-label="Navigație principală">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#oferta">Ofertă</a></li>
+          <li><a href="#proces">Cum decurge</a></li>
+          <li><a href="#portofoliu">Portofoliu</a></li>
+          <li><a href="#despre">Despre</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <!-- CTA în meniul mobil -->
+          <li><a href="#contact" class="btn btn-primary">Hai să vorbim</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-cta">
+        <a href="#contact" class="btn btn-primary btn-nav">Hai să vorbim</a>
+        <button class="nav-toggle" id="navToggle" aria-label="Deschide meniul" aria-expanded="false" aria-controls="navLinks">
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- =====================================================================
+         1 · HERO
+         VARIANTE DE TITLU (alege / rafinează — activă e prima, celelalte în comentariu):
+           A) „Un site pentru cabinetul <em>tău</em>, gândit de un psiholog." ← activă
+           B) „Prezența ta online, în mâinile unui <em>psiholog</em>."
+           C) „Site-uri de prezentare pentru psihologi <em>la început de drum</em>."
+         ===================================================================== -->
+    <section class="hero" id="hero">
+      <!-- Brain-mark mare, foarte discret, ca textură de fundal -->
+      <span class="brainmark hero-glow" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/>
+          <path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/>
+          <path d="M24 11v25"/>
+          <path d="M12.4 14c2.8.4 4.6 2.3 4.9 5.1M35.6 14c-2.8.4-4.6 2.3-4.9 5.1M8.1 21.6c2.7-.2 5 1.2 5.6 3.8M39.9 21.6c-2.7-.2-5 1.2-5.6 3.8"/>
+        </svg>
+      </span>
+
+      <div class="container">
+        <span class="badge reveal">✦ Site-uri pentru psihologi · Timișoara</span>
+        <h1 class="reveal">Un site pentru cabinetul <em>tău</em>, gândit de un psiholog.</h1>
+        <p class="subtitle reveal">Ai intrat în registru și acum trebuie să exiști și online — dar nu ai timp, text scris sau chef de bătăi de cap tehnice. Mă ocup eu de tot, în română, de la text până la publicare.</p>
+        <div class="hero-actions reveal">
+          <a href="#contact" class="btn btn-primary">Hai să vorbim <span class="arrow" aria-hidden="true">→</span></a>
+          <a href="#oferta" class="btn btn-ghost">Vezi ce include</a>
+        </div>
+        <p class="hero-note reveal"><strong>Sunt psiholog, ca tine.</strong> Știu exact ce trebuie să conțină site-ul unui cabinet.</p>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         2 · EMPATIE / PROBLEMĂ
+         ===================================================================== -->
+    <section class="empathy section-alt" id="empatie" aria-label="Situația ta">
+      <div class="container">
+        <p class="eyebrow reveal">Te recunoști?</p>
+        <h2 class="reveal">E emoționant să începi. Și puțin copleșitor.</h2>
+        <p class="lead reveal">Ești proaspăt atestat, ai pregătirea și dorința de a ajuta oameni — dar între tine și primii clienți stă o listă de lucruri la care nimeni nu te-a pregătit în facultate.</p>
+
+        <div class="empathy-grid">
+          <div class="empathy-card reveal">
+            <div class="num" aria-hidden="true">01</div>
+            <h3>Nu te găsește nimeni</h3>
+            <p>Când cineva caută un psiholog în orașul tău, tu nu apari nicăieri. Fără site, practic nu exiști pentru cei care au nevoie de tine.</p>
+          </div>
+          <div class="empathy-card reveal">
+            <div class="num" aria-hidden="true">02</div>
+            <h3>Nu ai timp și nu e domeniul tău</h3>
+            <p>Între supervizări, formări și primii pași în practică, „să-mi fac un site" rămâne mereu pe ultimul loc. Iar partea tehnică pare o limbă străină.</p>
+          </div>
+          <div class="empathy-card reveal">
+            <div class="num" aria-hidden="true">03</div>
+            <h3>Nu știi ce să scrii</h3>
+            <p>Ce pui pe pagină? Cum vorbești despre tine fără să sune fals sau pretențios? Pagina albă e intimidantă — și rămâne albă.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         3 · OFERTĂ (un singur pachet, preț vizibil)
+         ===================================================================== -->
+    <section class="offer" id="oferta">
+      <div class="container">
+        <div class="offer-card reveal">
+          <div class="offer-top">
+            <span class="badge">Un singur pachet, totul inclus</span>
+            <h2>Pachetul <em>Prezență</em></h2>
+            <p class="offer-sub">Un site de prezentare complet, de 4 pagini, scris și construit de la zero pentru cabinetul tău.</p>
+            <div class="price">
+              <span class="amount">320</span>
+              <span class="cur">€</span>
+              <span class="once">o singură dată</span>
+            </div>
+          </div>
+
+          <div class="offer-body">
+            <h3>Ce include</h3>
+            <!-- Iconița „check" e reutilizată; nu o modifica dacă nu vrei alt simbol -->
+            <ul class="includes">
+              <li>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>
+                <span><b>4 pagini:</b> Acasă, Servicii, Despre mine, Contact</span>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>
+                <span><b>Textele scrise de mine,</b> în română — tu nu vii cu nimic scris</span>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>
+                <span><b>Design responsive</b> — arată bine pe telefon și pe desktop</span>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>
+                <span><b>Formular de contact</b> funcțional</span>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>
+                <span><b>SEO de bază</b> — ca să te găsească oamenii în Google</span>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>
+                <span><b>Date de contact + hartă</b> integrate</span>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>
+                <span><b>Publicare</b> pe domeniul tău</span>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>
+                <span><b>1–2 runde de revizuire</b> — ajustăm până ești mulțumit</span>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg>
+                <span><b>Ghidare pas cu pas</b> la domeniu și găzduire — te conduc prin toată configurarea</span>
+              </li>
+            </ul>
+
+            <div class="offer-foot">
+              <a href="#contact" class="btn btn-primary">Vreau site-ul meu <span class="arrow" aria-hidden="true">→</span></a>
+              <!-- Notă discretă despre ce NU intră în preț, formulată reasigurant -->
+              <p class="offer-note">Domeniul și găzduirea se plătesc separat, direct la furnizor (în jur de câteva zeci de lei pe an) — dar <strong>te conduc eu prin toată configurarea,</strong> nu te las să te descurci singur.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         4 · CUM DECURGE (proces în 5 pași)
+         ===================================================================== -->
+    <section class="proces section-alt" id="proces">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow reveal">Cum decurge</p>
+          <h2 class="reveal">Simplu, de la prima discuție la site publicat.</h2>
+          <p class="reveal">Nu trebuie să înțelegi nimic tehnic. Tu îmi povestești despre tine, eu mă ocup de rest.</p>
+        </div>
+
+        <div class="steps-grid">
+          <div class="step reveal">
+            <div class="step-num" aria-hidden="true">1</div>
+            <h3>Discutăm</h3>
+            <p>O conversație relaxată despre tine, cabinetul tău și oamenii pe care vrei să-i ajuți.</p>
+          </div>
+          <div class="step reveal">
+            <div class="step-num" aria-hidden="true">2</div>
+            <h3>Scriu conținutul</h3>
+            <p>Din ce mi-ai povestit, scriu eu toate textele în română. Tu doar le citești și confirmi.</p>
+          </div>
+          <div class="step reveal">
+            <div class="step-num" aria-hidden="true">3</div>
+            <h3>Construiesc site-ul</h3>
+            <p>Design curat și cald, adaptat pentru un cabinet de psihologie, pe telefon și desktop.</p>
+          </div>
+          <div class="step reveal">
+            <div class="step-num" aria-hidden="true">4</div>
+            <h3>Revizuim</h3>
+            <p>Îmi spui ce ai vrea altfel. Ajustăm împreună, în 1–2 runde, până ești mulțumit.</p>
+          </div>
+          <div class="step reveal">
+            <div class="step-num" aria-hidden="true">5</div>
+            <h3>Publicăm</h3>
+            <p>Punem site-ul online pe domeniul tău și te ghidez pas cu pas la partea tehnică.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         5 · PORTOFOLIU
+         [PERSONALIZEAZĂ · PORTOFOLIU]
+         Cardurile placeholder au deja structura gata (imagine, nume, tip, link).
+         Ca să pui o imagine reală, DECOMENTEAZĂ <img> și șterge .thumb-placeholder,
+         sau lasă <img src="..."> — placeholderul se ascunde automat dacă imaginea se încarcă.
+         ===================================================================== -->
+    <section class="portfolio" id="portofoliu">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow reveal">Portofoliu</p>
+          <h2 class="reveal">Lucrări & <em>dovezi</em></h2>
+          <p class="reveal">Cel mai bun exemplu de cum lucrez e chiar site-ul meu. Urmează proiectele clienților.</p>
+        </div>
+
+        <div class="portfolio-grid">
+          <!-- CARD PRINCIPAL — site-ul tău, ca dovadă centrală -->
+          <article class="work-card feature reveal">
+            <div class="work-thumb">
+              <!-- [PERSONALIZEAZĂ · PORTOFOLIU] Pune o captură a site-ului tău, ex. images/toroscarol.jpg -->
+              <!-- <img src="images/toroscarol.jpg" alt="Captură din site-ul toroscarol.ro" onload="this.previousElementSibling && this.previousElementSibling.remove()"> -->
+              <div class="thumb-placeholder">
+                <span class="brainmark" aria-hidden="true">
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/><path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/><path d="M24 11v25"/></svg>
+                </span>
+                <small>captură toroscarol.ro</small>
+              </div>
+            </div>
+            <div class="work-body">
+              <span class="badge feature-tag">Proiect propriu</span>
+              <span class="work-type">Site de prezentare · Psihologie clinică</span>
+              <h3>toroscarol.ro</h3>
+              <p>Site-ul meu de cabinet — exact genul de prezență online pe care ți-o construiesc. Textul, structura și designul sunt gândite pentru un psiholog la început de drum, așa cum ești tu.</p>
+              <!-- [PERSONALIZEAZĂ · LINK] confirmă adresa -->
+              <a class="work-link" href="https://toroscarol.ro" target="_blank" rel="noopener">Vizitează site-ul <span class="arrow" aria-hidden="true">→</span></a>
+            </div>
+          </article>
+
+          <!-- PLACEHOLDER 1 — completează cu primul proiect client -->
+          <article class="work-card reveal">
+            <div class="work-thumb">
+              <!-- [PERSONALIZEAZĂ · PORTOFOLIU] <img src="images/proiect-1.jpg" alt="Descriere proiect 1" onload="this.previousElementSibling && this.previousElementSibling.remove()"> -->
+              <div class="thumb-placeholder">
+                <span class="brainmark" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/><path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/><path d="M24 11v25"/></svg></span>
+                <small>în curând</small>
+              </div>
+            </div>
+            <div class="work-body">
+              <span class="work-type">Site de prezentare</span>
+              <h3>Proiect client</h3>
+              <p>Locul primului tău proiect. Înlocuiește numele, tipul și imaginea când e gata.</p>
+              <!-- [PERSONALIZEAZĂ · LINK] -->
+              <a class="work-link" href="#" aria-disabled="true">În curând <span class="arrow" aria-hidden="true">→</span></a>
+            </div>
+          </article>
+
+          <!-- PLACEHOLDER 2 -->
+          <article class="work-card reveal">
+            <div class="work-thumb">
+              <!-- [PERSONALIZEAZĂ · PORTOFOLIU] <img src="images/proiect-2.jpg" alt="Descriere proiect 2" onload="this.previousElementSibling && this.previousElementSibling.remove()"> -->
+              <div class="thumb-placeholder">
+                <span class="brainmark" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/><path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/><path d="M24 11v25"/></svg></span>
+                <small>în curând</small>
+              </div>
+            </div>
+            <div class="work-body">
+              <span class="work-type">Site de prezentare</span>
+              <h3>Proiect client</h3>
+              <p>Al doilea slot din portofoliu. Adaugă captura și link-ul când publici site-ul.</p>
+              <!-- [PERSONALIZEAZĂ · LINK] -->
+              <a class="work-link" href="#" aria-disabled="true">În curând <span class="arrow" aria-hidden="true">→</span></a>
+            </div>
+          </article>
+
+          <!-- PLACEHOLDER 3 -->
+          <article class="work-card reveal">
+            <div class="work-thumb">
+              <!-- [PERSONALIZEAZĂ · PORTOFOLIU] <img src="images/proiect-3.jpg" alt="Descriere proiect 3" onload="this.previousElementSibling && this.previousElementSibling.remove()"> -->
+              <div class="thumb-placeholder">
+                <span class="brainmark" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/><path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/><path d="M24 11v25"/></svg></span>
+                <small>în curând</small>
+              </div>
+            </div>
+            <div class="work-body">
+              <span class="work-type">Site de prezentare</span>
+              <h3>Proiect client</h3>
+              <p>Al treilea slot. Pe măsură ce crește portofoliul, poți adăuga carduri noi copiind structura.</p>
+              <!-- [PERSONALIZEAZĂ · LINK] -->
+              <a class="work-link" href="#" aria-disabled="true">În curând <span class="arrow" aria-hidden="true">→</span></a>
+            </div>
+          </article>
+        </div>
+
+        <!-- Rând secundar mic: dovada combinației psiholog + design -->
+        <div class="resources-row reveal">
+          <div class="resources-card">
+            <span class="brainmark" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/><path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/><path d="M24 11v25"/></svg>
+            </span>
+            <div class="rc-text">
+              <h3>…și materiale clinice</h3>
+              <p>Nu doar construiesc site-uri — lucrez și cu conținut clinic. E dovada că înțeleg deopotrivă psihologia și designul.</p>
+            </div>
+            <!-- [PERSONALIZEAZĂ · LINK] confirmă adresa resurselor -->
+            <a class="btn btn-ghost" href="https://toroscarol.ro/resurse" target="_blank" rel="noopener">Vezi resursele <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         6 · DESPRE MINE
+         ===================================================================== -->
+    <section class="about section-alt" id="despre">
+      <div class="container">
+        <div class="about-portrait reveal">
+          <div class="frame">
+            <!-- [PERSONALIZEAZĂ · PORTOFOLIU] Pune o poză de portret, ex. images/carol.jpg
+                 <img src="images/carol.jpg" alt="Portret Carol Toros" onload="this.nextElementSibling && this.nextElementSibling.remove()"> -->
+            <div class="ph">
+              <span class="brainmark" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/><path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/><path d="M24 11v25"/></svg>
+              </span>
+              <small>fotografia ta aici</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-text">
+          <p class="eyebrow reveal">Despre mine</p>
+          <h2 class="reveal">De ce eu?</h2>
+          <p class="reveal">Sunt Carol Toros, psiholog clinician în Timișoara. Am trecut prin exact ce treci tu acum: momentul în care ai diploma și atestatul, dar nu și oamenii care să știe că exiști.</p>
+          <blockquote class="about-quote reveal">„Sunt psiholog, <span>ca tine.</span> Nu ghicesc ce trebuie să conțină site-ul unui cabinet — știu."</blockquote>
+          <p class="reveal">Diferența dintre mine și o agenție e simplă: vorbim aceeași limbă. Nu-ți cer să-mi explici ce e psihoterapia, nu te pun să scrii tu textele și nu te sperii cu jargon tehnic. Înțeleg realitatea unui terapeut nou-atestat — inclusiv bugetul.</p>
+          <p class="reveal">Combin pregătirea de psiholog cu designul web. Așa ies site-uri care nu doar arată bine, ci și <em>spun</em> ce trebuie, în cuvintele potrivite pentru clienții tăi.</p>
+
+          <div class="about-sign reveal">
+            <span class="brainmark" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/><path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/><path d="M24 11v25"/></svg>
+            </span>
+            <div>
+              <strong>Carol Toros</strong>
+              <small>Psiholog clinician &amp; creator de site-uri · Timișoara</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         7 · FAQ (acordeon)
+         ===================================================================== -->
+    <section class="faq" id="faq">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow reveal">Întrebări frecvente</p>
+          <h2 class="reveal">Ce te <em>întrebi</em> probabil acum</h2>
+        </div>
+
+        <div class="faq-wrap">
+          <details class="faq-item reveal">
+            <summary>Trebuie să scriu eu textele?<span class="faq-icon" aria-hidden="true"></span></summary>
+            <div class="faq-answer"><p>Nu. Asta e partea la care mă ocup eu de tot. Îmi povestești despre tine și despre ce faci într-o discuție relaxată, iar eu scriu toate textele în română — pentru toate cele 4 pagini. Tu doar le citești și îmi spui dacă e ceva de ajustat.</p></div>
+          </details>
+
+          <details class="faq-item reveal">
+            <summary>Cât durează până e gata?<span class="faq-icon" aria-hidden="true"></span></summary>
+            <div class="faq-answer"><p>De obicei între 1 și 3 săptămâni, în funcție de cât de repede ne aliniem la texte și la revizii. Ritmul îl dai tu — dacă răspunzi repede, mergem repede. Nu te grăbesc și nu te las nici să stagnezi.</p></div>
+          </details>
+
+          <details class="faq-item reveal">
+            <summary>Ce înseamnă „costul găzduirii" și cât e?<span class="faq-icon" aria-hidden="true"></span></summary>
+            <div class="faq-answer"><p>Ca să fie site-ul online ai nevoie de două lucruri: un <b>domeniu</b> (adresa, ex. numele-tău.ro) și <b>găzduire</b> (spațiul unde stă site-ul). Acestea se plătesc anual, direct la furnizor — de regulă câteva zeci de lei pe an, nu la mine. Costul e mic, dar recurent. Partea bună: <b>te ghidez pas cu pas</b> prin tot procesul, nu te las să te descurci singur.</p></div>
+          </details>
+
+          <details class="faq-item reveal">
+            <summary>Ce se întâmplă după ce site-ul e publicat?<span class="faq-icon" aria-hidden="true"></span></summary>
+            <div class="faq-answer"><p>Site-ul rămâne al tău, pe domeniul tău. Îți arăt cum să faci mici modificări dacă vrei, iar pentru schimbări mai mari mă poți contacta oricând. Pachetul include 1–2 runde de revizuire chiar înainte de publicare, ca să pornești cu un site cu care ești mulțumit.</p></div>
+          </details>
+
+          <details class="faq-item reveal">
+            <summary>De ce doar 4 pagini și nu ceva mai complex?<span class="faq-icon" aria-hidden="true"></span></summary>
+            <div class="faq-answer"><p>Pentru că, la început de drum, exact atât îți trebuie: un site clar, cald și profesionist care spune cine ești, ce oferi și cum te contactează cineva. Fără blog de întreținut, fără sisteme complicate. Când practica ta crește, putem discuta despre extinderi — dar nu te pun să plătești acum pentru lucruri de care nu ai încă nevoie.</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         8 · CONTACT / CTA FINAL
+         [PERSONALIZEAZĂ · CONTACT] înlocuiește email/telefon mai jos.
+         [PERSONALIZEAZĂ · FORMSPREE] vezi comentariul de deasupra <form>.
+         ===================================================================== -->
+    <section class="contact section-alt" id="contact">
+      <div class="container">
+        <div class="contact-intro">
+          <p class="eyebrow reveal">Hai să vorbim</p>
+          <h2 class="reveal">Primul pas e o <em>conversație</em>.</h2>
+          <p class="reveal">Fără presiune și fără angajament. Scrie-mi câteva rânduri despre tine și îți răspund cu următorii pași. Dacă ți-e mai ușor, poți să-mi trimiți direct un email.</p>
+
+          <ul class="contact-details">
+            <li class="reveal">
+              <span class="ci" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+              </span>
+              <!-- [PERSONALIZEAZĂ · CONTACT] adresa ta de email -->
+              <a href="mailto:contact@toroscarol.ro">contact@toroscarol.ro</a>
+            </li>
+            <li class="reveal">
+              <span class="ci" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15.5v3a2 2 0 0 1-2.2 2 19 19 0 0 1-8.3-3 18.5 18.5 0 0 1-5.7-5.7 19 19 0 0 1-3-8.4A2 2 0 0 1 3.8 1H6.8a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L7.9 8.6a15 15 0 0 0 5.7 5.7l1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>
+              </span>
+              <!-- [PERSONALIZEAZĂ · CONTACT] telefon (opțional; șterge tot <li> dacă nu-l vrei) -->
+              <span>+40 7xx xxx xxx <small>Timișoara</small></span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- =================================================================
+             FORMULAR DE CONTACT
+             -----------------------------------------------------------------
+             Un site static NU poate procesa formulare singur. Folosim FORMSPREE
+             (gratuit pentru volume mici) ca să primești mesajele pe email.
+
+             CUM ÎL CONECTEZI (5 minute):
+               1. Intră pe https://formspree.io și fă un cont gratuit.
+               2. Creează un „New form" și pune email-ul pe care vrei să
+                  primești mesajele.
+               3. Formspree îți dă un endpoint de forma:
+                     https://formspree.io/f/xxxxxxx
+               4. [PERSONALIZEAZĂ · FORMSPREE] Înlocuiește mai jos, în atributul
+                  action, textul  https://formspree.io/f/AICI_ENDPOINT_FORMSPREE
+                  cu endpoint-ul tău real.
+               5. Gata. La primul mesaj, Formspree îți cere o confirmare pe email.
+
+             FALLBACK: cât timp NU ai pus endpoint-ul real (linia conține încă
+             „AICI_ENDPOINT_FORMSPREE"), JS-ul din josul paginii deschide automat
+             clientul de email al vizitatorului (mailto) — deci formularul „merge"
+             chiar și neconfigurat. După ce pui endpoint-ul real, trimite prin
+             Formspree (AJAX) și afișează un mesaj de mulțumire, fără reîncărcare.
+             ================================================================= -->
+        <form class="contact-form reveal"
+              id="contactForm"
+              action="https://formspree.io/f/AICI_ENDPOINT_FORMSPREE"
+              method="POST">
+          <div class="field">
+            <label for="name">Numele tău</label>
+            <input type="text" id="name" name="name" autocomplete="name" placeholder="Ex. Ana Popescu" required />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" autocomplete="email" placeholder="ana@exemplu.ro" required />
+          </div>
+          <div class="field">
+            <label for="message">Mesajul tău</label>
+            <textarea id="message" name="message" placeholder="Spune-mi câteva cuvinte despre tine și despre cabinetul tău…" required></textarea>
+          </div>
+          <!-- Subiect predefinit pt. email-urile Formspree (opțional) -->
+          <input type="hidden" name="_subject" value="Mesaj nou de pe site — pachet Prezență" />
+
+          <button type="submit" class="btn btn-primary btn-block">Trimite mesajul <span class="arrow" aria-hidden="true">→</span></button>
+
+          <!-- Mesaje de stare (populează JS-ul) -->
+          <p class="form-msg" id="formOk" role="status">Mulțumesc! Mesajul a plecat. Îți răspund cât de curând. ✦</p>
+          <p class="form-msg" id="formErr" role="alert">Ceva n-a mers. Încearcă din nou sau scrie-mi direct pe email.</p>
+
+          <p class="form-fine">Datele tale rămân între noi. Le folosesc doar ca să-ți răspund.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- =====================================================================
+       9 · FOOTER
+       ===================================================================== -->
+  <footer class="footer">
+    <div class="container">
+      <a href="#hero" class="logo">
+        <span class="brainmark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="26" height="26"><path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/><path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/><path d="M24 11v25"/></svg>
+        </span>
+        Carol&nbsp;Toros
+      </a>
+      <nav class="footer-links" aria-label="Navigație subsol">
+        <a href="#oferta">Ofertă</a>
+        <a href="#portofoliu">Portofoliu</a>
+        <a href="#despre">Despre</a>
+        <a href="#contact">Contact</a>
+        <!-- [PERSONALIZEAZĂ · LINK] -->
+        <a href="https://toroscarol.ro" target="_blank" rel="noopener">toroscarol.ro</a>
+      </nav>
+      <p class="footer-copy">© <span id="year">2026</span> Carol Toros · Site-uri de prezentare pentru psihologi și psihoterapeuți · Timișoara. Sunt psiholog, ca tine.</p>
+    </div>
+  </footer>
+
+  <!-- =====================================================================
+       JAVASCRIPT (vanilla, fără dependențe)
+       ===================================================================== -->
+  <script>
+    (function () {
+      "use strict";
+
+      /* ---------- An curent în footer ---------- */
+      var yearEl = document.getElementById("year");
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+      /* ---------- Nav: umbră la scroll ---------- */
+      var nav = document.getElementById("nav");
+      function onScroll() {
+        if (window.scrollY > 12) nav.classList.add("scrolled");
+        else nav.classList.remove("scrolled");
+      }
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
+
+      /* ---------- Meniu mobil (hamburger) ---------- */
+      var toggle = document.getElementById("navToggle");
+      var navLinks = document.getElementById("navLinks");
+      function closeMenu() {
+        nav.classList.remove("open");
+        toggle.setAttribute("aria-expanded", "false");
+        toggle.setAttribute("aria-label", "Deschide meniul");
+      }
+      toggle.addEventListener("click", function () {
+        var open = nav.classList.toggle("open");
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        toggle.setAttribute("aria-label", open ? "Închide meniul" : "Deschide meniul");
+      });
+      /* Închide meniul când dai click pe un link (pe mobil) */
+      navLinks.addEventListener("click", function (e) {
+        if (e.target.closest("a")) closeMenu();
+      });
+
+      /* ---------- Stare activă în nav (IntersectionObserver) ---------- */
+      var sections = document.querySelectorAll("main section[id]");
+      var linkMap = {};
+      document.querySelectorAll('.nav-links a[href^="#"]').forEach(function (a) {
+        linkMap[a.getAttribute("href").slice(1)] = a;
+      });
+      if ("IntersectionObserver" in window) {
+        var navObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              var id = entry.target.id;
+              Object.keys(linkMap).forEach(function (k) {
+                linkMap[k] && linkMap[k].classList.toggle("active", k === id);
+              });
+            }
+          });
+        }, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });
+        sections.forEach(function (s) { navObserver.observe(s); });
+      }
+
+      /* ---------- Reveal la scroll ---------- */
+      var reveals = document.querySelectorAll(".reveal");
+      if ("IntersectionObserver" in window) {
+        var revObserver = new IntersectionObserver(function (entries, obs) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("in");
+              obs.unobserve(entry.target);
+            }
+          });
+        }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
+        reveals.forEach(function (el) { revObserver.observe(el); });
+      } else {
+        reveals.forEach(function (el) { el.classList.add("in"); });
+      }
+
+      /* ---------- Formular de contact: Formspree cu fallback mailto ---------- */
+      var form = document.getElementById("contactForm");
+      var okMsg = document.getElementById("formOk");
+      var errMsg = document.getElementById("formErr");
+      // [PERSONALIZEAZĂ · CONTACT] email-ul pe care merge fallback-ul mailto:
+      var FALLBACK_EMAIL = "contact@toroscarol.ro";
+
+      function resetMsgs() {
+        okMsg.classList.remove("ok");
+        errMsg.classList.remove("err");
+      }
+
+      form.addEventListener("submit", function (e) {
+        var action = form.getAttribute("action") || "";
+        var notConfigured = action.indexOf("AICI_ENDPOINT_FORMSPREE") !== -1;
+
+        // ----- FALLBACK: Formspree încă neconfigurat → deschide mailto -----
+        if (notConfigured) {
+          e.preventDefault();
+          resetMsgs();
+          var name = encodeURIComponent(form.name.value || "");
+          var email = encodeURIComponent(form.email.value || "");
+          var msg = encodeURIComponent(form.message.value || "");
+          var body = "Nume: " + name + "%0D%0AEmail: " + email + "%0D%0A%0D%0A" + msg;
+          window.location.href = "mailto:" + FALLBACK_EMAIL +
+            "?subject=" + encodeURIComponent("Mesaj de pe site — pachet Prezență") +
+            "&body=" + body;
+          return;
+        }
+
+        // ----- Formspree configurat → trimite prin AJAX, fără reîncărcare -----
+        e.preventDefault();
+        resetMsgs();
+        var btn = form.querySelector('button[type="submit"]');
+        var original = btn.innerHTML;
+        btn.disabled = true;
+        btn.textContent = "Se trimite…";
+
+        fetch(action, {
+          method: "POST",
+          body: new FormData(form),
+          headers: { Accept: "application/json" }
+        }).then(function (res) {
+          if (res.ok) {
+            form.reset();
+            okMsg.classList.add("ok");
+          } else {
+            errMsg.classList.add("err");
+          }
+        }).catch(function () {
+          errMsg.classList.add("err");
+        }).finally(function () {
+          btn.disabled = false;
+          btn.innerHTML = original;
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
