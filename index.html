@@ -7,11 +7,15 @@
   Fără build, fără framework. Îl poți urca direct prin FTP în public_html.
 
   ✦ CE TREBUIE SĂ PERSONALIZEZI (caută în cod comentariile [PERSONALIZEAZĂ]):
-    1. Endpoint-ul formularului Formspree  → caută: [PERSONALIZEAZĂ · FORMSPREE]
-    2. Imaginile din portofoliu            → caută: [PERSONALIZEAZĂ · PORTOFOLIU]
-    3. Datele de contact (email, telefon)  → caută: [PERSONALIZEAZĂ · CONTACT]
-    4. Link-urile proiectelor              → caută: [PERSONALIZEAZĂ · LINK]
+    1. Numărul de WhatsApp / mesajul predefinit → caută: [PERSONALIZEAZĂ · WHATSAPP]
+    2. Imaginile din portofoliu                 → caută: [PERSONALIZEAZĂ · PORTOFOLIU]
+    3. Datele de contact (email, WhatsApp)      → caută: [PERSONALIZEAZĂ · CONTACT]
+    4. Link-urile proiectelor                   → caută: [PERSONALIZEAZĂ · LINK]
   Textele sunt aproape finale — le poți rafina oriunde în corpul paginii.
+
+  ✦ CONTACT: nu există formular. Toate butoanele de contact deschid direct
+    WhatsApp (wa.me), cu un mesaj deja scris. Numărul e 0723 030 195, adică
+    în format internațional pentru wa.me: 40723030195 (fără „+" și fără „0").
   =====================================================================
 -->
 <!DOCTYPE html>
@@ -34,8 +38,8 @@
   <!-- <meta property="og:url" content="https://domeniul-tau.ro" /> -->
   <!-- <meta property="og:image" content="https://domeniul-tau.ro/og-image.jpg" /> -->
 
-  <!-- Favicon minimal: brand-mark line-art (creier stilizat) ca SVG inline, fără fișier extern -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='10' fill='%23FAF7F2'/%3E%3Cg fill='none' stroke='%238A9B7A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M24 12c-4-2-9-1-11 3-4 0-6 4-4 7-3 2-3 7 1 9 0 4 4 6 8 5'/%3E%3Cpath d='M24 12c4-2 9-1 11 3 4 0 6 4 4 7 3 2 3 7-1 9 0 4-4 6-8 5'/%3E%3Cpath d='M24 12v25'/%3E%3C/g%3E%3C/svg%3E" />
+  <!-- Favicon minimal, neutru (fără logo): pătrat rotunjit în verde salvie -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%238A9B7A'/%3E%3C/svg%3E" />
 
   <!-- ============ FONTURI ============
        Playfair Display (titluri, logotype, citate) din Google Fonts.
@@ -171,9 +175,13 @@
       border: 1px solid rgba(138,155,122,.22);
     }
 
-    /* Brain-mark line-art (semn de brand) */
-    .brainmark { display: inline-block; color: var(--sage); }
-    .brainmark svg { display: block; }
+    /* Iconiță WhatsApp în butoane */
+    .wa-icon { flex: none; }
+    .btn .wa-icon { margin-right: 2px; }
+
+    /* Iconiță neutră (ramă imagine) pentru locurile fără poză încă */
+    .ph-icon { display: inline-block; color: var(--sage); opacity: .5; }
+    .ph-icon svg { display: block; }
 
     /* =====================================================================
        NAVIGAȚIE FIXĂ
@@ -191,9 +199,9 @@
     .nav.scrolled { border-bottom-color: var(--line); box-shadow: var(--shadow-sm); }
     .nav .container { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 
-    .logo { display: inline-flex; align-items: center; gap: 11px; font-family: var(--serif); font-size: 1.32rem; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+    /* Wordmark text (numele) — fără logo grafic */
+    .logo { display: inline-flex; align-items: center; font-family: var(--serif); font-size: 1.32rem; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
     .logo:hover { color: var(--ink); }
-    .logo .brainmark { width: 30px; }
 
     .nav-links { display: flex; align-items: center; gap: 4px; list-style: none; }
     .nav-links a {
@@ -229,8 +237,6 @@
        HERO
        ===================================================================== */
     .hero { position: relative; padding-top: calc(var(--nav-h) + clamp(48px, 8vw, 92px)); padding-bottom: clamp(56px, 8vw, 104px); text-align: center; overflow: hidden; }
-    /* Brain-mark uriaș, foarte discret, ca textură de fundal */
-    .hero-glow { position: absolute; top: -6%; left: 50%; transform: translateX(-50%); width: min(560px, 90vw); color: var(--sage); opacity: .07; pointer-events: none; z-index: 0; }
     .hero .container { position: relative; z-index: 1; }
     .hero .badge { margin-bottom: 26px; }
     .hero h1 { font-size: clamp(2.4rem, 5.2vw, 4.05rem); max-width: 15ch; margin-inline: auto; }
@@ -310,7 +316,7 @@
     .work-thumb img { width: 100%; height: 100%; object-fit: cover; }
     /* Placeholder vizual când nu ai încă imaginea (se ascunde automat dacă pui <img>) */
     .thumb-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--sage-dark); text-align: center; padding: 20px; }
-    .thumb-placeholder .brainmark { width: 46px; opacity: .5; }
+    .thumb-placeholder .ph-icon { width: 46px; }
     .thumb-placeholder small { font-size: .82rem; opacity: .8; letter-spacing: .02em; }
     .work-body { padding: 26px 28px; flex: 1; display: flex; flex-direction: column; }
     .work-card.feature .work-body { justify-content: center; }
@@ -331,7 +337,8 @@
       background: var(--sage-tint); border: 1px solid rgba(138,155,122,.24);
       border-radius: var(--radius); padding: 24px 30px;
     }
-    .resources-card .brainmark { width: 40px; flex: none; }
+    .resources-card .rc-icon { width: 40px; flex: none; color: var(--sage-dark); }
+    .resources-card .rc-icon svg { display: block; }
     .resources-card .rc-text { flex: 1; min-width: 240px; }
     .resources-card .rc-text h3 { font-size: 1.12rem; margin-bottom: 4px; }
     .resources-card .rc-text p { font-size: .95rem; }
@@ -349,14 +356,13 @@
     }
     .about-portrait .frame img { width: 100%; height: 100%; object-fit: cover; }
     .about-portrait .ph { display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--sage-dark); text-align: center; padding: 24px; }
-    .about-portrait .ph .brainmark { width: 56px; opacity: .55; }
+    .about-portrait .ph .ph-icon { width: 56px; }
     .about-text h2 { font-size: clamp(1.9rem, 3.4vw, 2.7rem); margin-bottom: 22px; }
     .about-text p { margin-bottom: 18px; }
     .about-text p:last-of-type { margin-bottom: 0; }
     .about-quote { font-family: var(--serif); font-style: italic; font-size: clamp(1.3rem, 2.4vw, 1.7rem); color: var(--ink); line-height: 1.4; border-left: 3px solid var(--sage); padding-left: 22px; margin: 28px 0; }
     .about-quote span { color: var(--sage); }
-    .about-sign { margin-top: 26px; display: flex; align-items: center; gap: 14px; }
-    .about-sign .brainmark { width: 34px; }
+    .about-sign { margin-top: 26px; padding-left: 18px; border-left: 3px solid var(--sage); }
     .about-sign strong { font-family: var(--serif); font-size: 1.1rem; color: var(--ink); font-weight: 600; }
     .about-sign small { display: block; font-size: .88rem; color: var(--body); }
 
@@ -381,31 +387,23 @@
     .faq-answer p { font-size: 1.02rem; }
 
     /* =====================================================================
-       CONTACT / CTA FINAL
+       CONTACT / CTA FINAL (fără formular — totul merge pe WhatsApp)
        ===================================================================== */
-    .contact .container { display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(36px, 6vw, 68px); align-items: start; }
-    .contact-intro h2 { font-size: clamp(2rem, 3.6vw, 2.9rem); margin-bottom: 18px; }
-    .contact-intro p { margin-bottom: 26px; max-width: 42ch; }
-    .contact-details { list-style: none; display: flex; flex-direction: column; gap: 16px; }
-    .contact-details li { display: flex; align-items: center; gap: 14px; }
-    .contact-details .ci { flex: none; width: 44px; height: 44px; border-radius: var(--pill); background: var(--sage-tint); color: var(--sage-dark); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(138,155,122,.24); }
-    .contact-details a, .contact-details span { font-size: 1.05rem; color: var(--ink); }
-    .contact-details small { display: block; font-size: .82rem; color: var(--body); }
-
-    .contact-form { background: var(--card); border: 1px solid var(--line); border-radius: 28px; padding: clamp(28px, 4vw, 40px); box-shadow: var(--shadow-md); }
-    .field { margin-bottom: 20px; }
-    .field label { display: block; font-size: .88rem; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
-    .field input, .field textarea {
-      width: 100%; font-family: var(--sans); font-size: 1rem; color: var(--ink);
-      background: #FDFCFA; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px;
-      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    .contact-card {
+      max-width: 640px; margin-inline: auto; text-align: center;
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: 28px; box-shadow: var(--shadow-lg);
+      padding: clamp(38px, 6vw, 64px) clamp(26px, 5vw, 56px);
     }
-    .field input:focus, .field textarea:focus { outline: none; border-color: var(--sage); background: #fff; box-shadow: 0 0 0 3px rgba(138,155,122,.14); }
-    .field textarea { resize: vertical; min-height: 130px; }
-    .form-msg { display: none; margin-top: 16px; padding: 14px 18px; border-radius: 14px; font-size: .95rem; }
-    .form-msg.ok { display: block; background: var(--sage-tint); color: var(--sage-dark); border: 1px solid rgba(138,155,122,.3); }
-    .form-msg.err { display: block; background: #FBEFEA; color: #B5573B; border: 1px solid #F0D2C6; }
-    .form-fine { margin-top: 14px; font-size: .82rem; color: var(--body); text-align: center; }
+    .contact-card .eyebrow { margin-bottom: 16px; }
+    .contact-card h2 { font-size: clamp(2rem, 3.8vw, 2.9rem); }
+    .contact-card p { margin: 18px auto 0; max-width: 46ch; }
+    .contact-actions { margin-top: 34px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .contact-actions .btn { padding: 16px 40px; font-size: 1.05rem; }
+    /* Butonul WhatsApp — verde salvie (păstrăm un singur accent, nu verdele WhatsApp) */
+    .contact-alt { margin-top: 26px; font-size: .96rem; color: var(--body); }
+    .contact-alt a { font-weight: 600; }
+    .contact-fine { margin-top: 22px; font-size: .84rem; color: var(--body); opacity: .85; }
 
     /* =====================================================================
        FOOTER
@@ -413,7 +411,6 @@
     .footer { background: var(--ink); color: #CFC9C0; padding-block: 46px; }
     .footer .container { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
     .footer .logo { color: #fff; font-size: 1.2rem; }
-    .footer .logo .brainmark { color: var(--sage); }
     .footer a { color: #CFC9C0; }
     .footer a:hover { color: #fff; }
     .footer-links { display: flex; gap: 22px; flex-wrap: wrap; font-size: .92rem; }
@@ -481,18 +478,8 @@
        ===================================================================== -->
   <header class="nav" id="nav">
     <div class="container">
-      <a href="#hero" class="logo" aria-label="Carol Toros — acasă">
-        <!-- Brain-mark line-art (semn de brand) -->
-        <span class="brainmark" aria-hidden="true">
-          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/>
-            <path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/>
-            <path d="M24 11v25"/>
-            <path d="M12.4 14c2.8.4 4.6 2.3 4.9 5.1M35.6 14c-2.8.4-4.6 2.3-4.9 5.1M8.1 21.6c2.7-.2 5 1.2 5.6 3.8M39.9 21.6c-2.7-.2-5 1.2-5.6 3.8"/>
-          </svg>
-        </span>
-        Carol&nbsp;Toros
-      </a>
+      <!-- Wordmark: doar numele, fără logo grafic -->
+      <a href="#hero" class="logo" aria-label="Carol Toros — acasă">Carol&nbsp;Toros</a>
 
       <nav aria-label="Navigație principală">
         <ul class="nav-links" id="navLinks">
@@ -501,13 +488,19 @@
           <li><a href="#portofoliu">Portofoliu</a></li>
           <li><a href="#despre">Despre</a></li>
           <li><a href="#contact">Contact</a></li>
-          <!-- CTA în meniul mobil -->
-          <li><a href="#contact" class="btn btn-primary">Hai să vorbim</a></li>
+          <!-- CTA în meniul mobil → deschide WhatsApp -->
+          <li><a href="https://wa.me/40723030195?text=Bun%C4%83%2C%20Carol!%20A%C8%99%20vrea%20un%20site%20de%20prezentare%20pentru%20cabinetul%20meu." target="_blank" rel="noopener" class="btn btn-primary">
+            <svg class="wa-icon" width="18" height="18" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16.04 4C9.93 4 4.98 8.95 4.98 15.06c0 1.95.51 3.86 1.48 5.55L4.9 27l6.56-1.72a11 11 0 0 0 4.57.98h.01c6.11 0 11.06-4.95 11.06-11.06C27.1 8.95 22.15 4 16.04 4zm0 20.24h-.01a9.2 9.2 0 0 1-4.68-1.28l-.34-.2-3.89 1.02 1.04-3.79-.22-.35a9.15 9.15 0 0 1-1.4-4.85c0-5.06 4.12-9.18 9.19-9.18 2.45 0 4.76.96 6.49 2.69a9.13 9.13 0 0 1 2.69 6.5c0 5.06-4.12 9.18-9.18 9.18zm5.04-6.87c-.28-.14-1.63-.8-1.89-.9-.25-.09-.44-.14-.62.14-.18.28-.71.9-.87 1.08-.16.18-.32.2-.6.07-.28-.14-1.17-.43-2.22-1.37-.82-.73-1.37-1.63-1.53-1.91-.16-.28-.02-.43.12-.57.13-.13.28-.32.42-.48.14-.16.18-.28.28-.46.09-.18.05-.35-.02-.48-.07-.14-.62-1.5-.85-2.05-.22-.54-.45-.46-.62-.47-.16-.01-.35-.01-.53-.01s-.48.07-.73.35c-.25.28-.96.94-.96 2.3 0 1.35.98 2.66 1.12 2.84.14.18 1.93 2.95 4.68 4.13.65.28 1.16.45 1.56.58.66.21 1.25.18 1.72.11.53-.08 1.63-.67 1.86-1.31.23-.64.23-1.19.16-1.31-.07-.12-.25-.19-.53-.33z"/></svg>
+            Hai să vorbim</a></li>
         </ul>
       </nav>
 
       <div class="nav-cta">
-        <a href="#contact" class="btn btn-primary btn-nav">Hai să vorbim</a>
+        <!-- [PERSONALIZEAZĂ · WHATSAPP] Acest link se repetă la fiecare buton de contact.
+             Format wa.me: 40723030195 (fără „+", fără „0" inițial). „text=" e mesajul deja scris. -->
+        <a href="https://wa.me/40723030195?text=Bun%C4%83%2C%20Carol!%20A%C8%99%20vrea%20un%20site%20de%20prezentare%20pentru%20cabinetul%20meu." target="_blank" rel="noopener" class="btn btn-primary btn-nav">
+          <svg class="wa-icon" width="18" height="18" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16.04 4C9.93 4 4.98 8.95 4.98 15.06c0 1.95.51 3.86 1.48 5.55L4.9 27l6.56-1.72a11 11 0 0 0 4.57.98h.01c6.11 0 11.06-4.95 11.06-11.06C27.1 8.95 22.15 4 16.04 4zm0 20.24h-.01a9.2 9.2 0 0 1-4.68-1.28l-.34-.2-3.89 1.02 1.04-3.79-.22-.35a9.15 9.15 0 0 1-1.4-4.85c0-5.06 4.12-9.18 9.19-9.18 2.45 0 4.76.96 6.49 2.69a9.13 9.13 0 0 1 2.69 6.5c0 5.06-4.12 9.18-9.18 9.18zm5.04-6.87c-.28-.14-1.63-.8-1.89-.9-.25-.09-.44-.14-.62.14-.18.28-.71.9-.87 1.08-.16.18-.32.2-.6.07-.28-.14-1.17-.43-2.22-1.37-.82-.73-1.37-1.63-1.53-1.91-.16-.28-.02-.43.12-.57.13-.13.28-.32.42-.48.14-.16.18-.28.28-.46.09-.18.05-.35-.02-.48-.07-.14-.62-1.5-.85-2.05-.22-.54-.45-.46-.62-.47-.16-.01-.35-.01-.53-.01s-.48.07-.73.35c-.25.28-.96.94-.96 2.3 0 1.35.98 2.66 1.12 2.84.14.18 1.93 2.95 4.68 4.13.65.28 1.16.45 1.56.58.66.21 1.25.18 1.72.11.53-.08 1.63-.67 1.86-1.31.23-.64.23-1.19.16-1.31-.07-.12-.25-.19-.53-.33z"/></svg>
+          Hai să vorbim</a>
         <button class="nav-toggle" id="navToggle" aria-label="Deschide meniul" aria-expanded="false" aria-controls="navLinks">
           <span></span>
         </button>
@@ -525,22 +518,15 @@
            C) „Site-uri de prezentare pentru psihologi <em>la început de drum</em>."
          ===================================================================== -->
     <section class="hero" id="hero">
-      <!-- Brain-mark mare, foarte discret, ca textură de fundal -->
-      <span class="brainmark hero-glow" aria-hidden="true">
-        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/>
-          <path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/>
-          <path d="M24 11v25"/>
-          <path d="M12.4 14c2.8.4 4.6 2.3 4.9 5.1M35.6 14c-2.8.4-4.6 2.3-4.9 5.1M8.1 21.6c2.7-.2 5 1.2 5.6 3.8M39.9 21.6c-2.7-.2-5 1.2-5.6 3.8"/>
-        </svg>
-      </span>
-
       <div class="container">
-        <span class="badge reveal">✦ Site-uri pentru psihologi · Timișoara</span>
+        <span class="badge reveal">✦ Site-uri pentru psihologi</span>
         <h1 class="reveal">Un site pentru cabinetul <em>tău</em>, gândit de un psiholog.</h1>
         <p class="subtitle reveal">Ai intrat în registru și acum trebuie să exiști și online — dar nu ai timp, text scris sau chef de bătăi de cap tehnice. Mă ocup eu de tot, în română, de la text până la publicare.</p>
         <div class="hero-actions reveal">
-          <a href="#contact" class="btn btn-primary">Hai să vorbim <span class="arrow" aria-hidden="true">→</span></a>
+          <!-- [PERSONALIZEAZĂ · WHATSAPP] deschide WhatsApp cu mesaj pre-scris -->
+          <a href="https://wa.me/40723030195?text=Bun%C4%83%2C%20Carol!%20A%C8%99%20vrea%20un%20site%20de%20prezentare%20pentru%20cabinetul%20meu." target="_blank" rel="noopener" class="btn btn-primary">
+            <svg class="wa-icon" width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16.04 4C9.93 4 4.98 8.95 4.98 15.06c0 1.95.51 3.86 1.48 5.55L4.9 27l6.56-1.72a11 11 0 0 0 4.57.98h.01c6.11 0 11.06-4.95 11.06-11.06C27.1 8.95 22.15 4 16.04 4zm0 20.24h-.01a9.2 9.2 0 0 1-4.68-1.28l-.34-.2-3.89 1.02 1.04-3.79-.22-.35a9.15 9.15 0 0 1-1.4-4.85c0-5.06 4.12-9.18 9.19-9.18 2.45 0 4.76.96 6.49 2.69a9.13 9.13 0 0 1 2.69 6.5c0 5.06-4.12 9.18-9.18 9.18zm5.04-6.87c-.28-.14-1.63-.8-1.89-.9-.25-.09-.44-.14-.62.14-.18.28-.71.9-.87 1.08-.16.18-.32.2-.6.07-.28-.14-1.17-.43-2.22-1.37-.82-.73-1.37-1.63-1.53-1.91-.16-.28-.02-.43.12-.57.13-.13.28-.32.42-.48.14-.16.18-.28.28-.46.09-.18.05-.35-.02-.48-.07-.14-.62-1.5-.85-2.05-.22-.54-.45-.46-.62-.47-.16-.01-.35-.01-.53-.01s-.48.07-.73.35c-.25.28-.96.94-.96 2.3 0 1.35.98 2.66 1.12 2.84.14.18 1.93 2.95 4.68 4.13.65.28 1.16.45 1.56.58.66.21 1.25.18 1.72.11.53-.08 1.63-.67 1.86-1.31.23-.64.23-1.19.16-1.31-.07-.12-.25-.19-.53-.33z"/></svg>
+            Scrie-mi pe WhatsApp</a>
           <a href="#oferta" class="btn btn-ghost">Vezi ce include</a>
         </div>
         <p class="hero-note reveal"><strong>Sunt psiholog, ca tine.</strong> Știu exact ce trebuie să conțină site-ul unui cabinet.</p>
@@ -636,7 +622,10 @@
             </ul>
 
             <div class="offer-foot">
-              <a href="#contact" class="btn btn-primary">Vreau site-ul meu <span class="arrow" aria-hidden="true">→</span></a>
+              <!-- [PERSONALIZEAZĂ · WHATSAPP] deschide WhatsApp cu mesaj pre-scris -->
+              <a href="https://wa.me/40723030195?text=Bun%C4%83%2C%20Carol!%20A%C8%99%20vrea%20un%20site%20de%20prezentare%20pentru%20cabinetul%20meu." target="_blank" rel="noopener" class="btn btn-primary">
+                <svg class="wa-icon" width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16.04 4C9.93 4 4.98 8.95 4.98 15.06c0 1.95.51 3.86 1.48 5.55L4.9 27l6.56-1.72a11 11 0 0 0 4.57.98h.01c6.11 0 11.06-4.95 11.06-11.06C27.1 8.95 22.15 4 16.04 4zm0 20.24h-.01a9.2 9.2 0 0 1-4.68-1.28l-.34-.2-3.89 1.02 1.04-3.79-.22-.35a9.15 9.15 0 0 1-1.4-4.85c0-5.06 4.12-9.18 9.19-9.18 2.45 0 4.76.96 6.49 2.69a9.13 9.13 0 0 1 2.69 6.5c0 5.06-4.12 9.18-9.18 9.18zm5.04-6.87c-.28-.14-1.63-.8-1.89-.9-.25-.09-.44-.14-.62.14-.18.28-.71.9-.87 1.08-.16.18-.32.2-.6.07-.28-.14-1.17-.43-2.22-1.37-.82-.73-1.37-1.63-1.53-1.91-.16-.28-.02-.43.12-.57.13-.13.28-.32.42-.48.14-.16.18-.28.28-.46.09-.18.05-.35-.02-.48-.07-.14-.62-1.5-.85-2.05-.22-.54-.45-.46-.62-.47-.16-.01-.35-.01-.53-.01s-.48.07-.73.35c-.25.28-.96.94-.96 2.3 0 1.35.98 2.66 1.12 2.84.14.18 1.93 2.95 4.68 4.13.65.28 1.16.45 1.56.58.66.21 1.25.18 1.72.11.53-.08 1.63-.67 1.86-1.31.23-.64.23-1.19.16-1.31-.07-.12-.25-.19-.53-.33z"/></svg>
+                Vreau site-ul meu</a>
               <!-- Notă discretă despre ce NU intră în preț, formulată reasigurant -->
               <p class="offer-note">Domeniul și găzduirea se plătesc separat, direct la furnizor (în jur de câteva zeci de lei pe an) — dar <strong>te conduc eu prin toată configurarea,</strong> nu te las să te descurci singur.</p>
             </div>
@@ -708,8 +697,8 @@
               <!-- [PERSONALIZEAZĂ · PORTOFOLIU] Pune o captură a site-ului tău, ex. images/toroscarol.jpg -->
               <!-- <img src="images/toroscarol.jpg" alt="Captură din site-ul toroscarol.ro" onload="this.previousElementSibling && this.previousElementSibling.remove()"> -->
               <div class="thumb-placeholder">
-                <span class="brainmark" aria-hidden="true">
-                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/><path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/><path d="M24 11v25"/></svg>
+                <span class="ph-icon" aria-hidden="true">
+                  <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="10" width="34" height="28" rx="3"/><circle cx="17" cy="20" r="3"/><path d="M41 30l-9-8-13 12"/></svg>
                 </span>
                 <small>captură toroscarol.ro</small>
               </div>
@@ -729,7 +718,7 @@
             <div class="work-thumb">
               <!-- [PERSONALIZEAZĂ · PORTOFOLIU] <img src="images/proiect-1.jpg" alt="Descriere proiect 1" onload="this.previousElementSibling && this.previousElementSibling.remove()"> -->
               <div class="thumb-placeholder">
-                <span class="brainmark" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/><path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/><path d="M24 11v25"/></svg></span>
+                <span class="ph-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="10" width="34" height="28" rx="3"/><circle cx="17" cy="20" r="3"/><path d="M41 30l-9-8-13 12"/></svg></span>
                 <small>în curând</small>
               </div>
             </div>
@@ -747,7 +736,7 @@
             <div class="work-thumb">
               <!-- [PERSONALIZEAZĂ · PORTOFOLIU] <img src="images/proiect-2.jpg" alt="Descriere proiect 2" onload="this.previousElementSibling && this.previousElementSibling.remove()"> -->
               <div class="thumb-placeholder">
-                <span class="brainmark" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/><path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/><path d="M24 11v25"/></svg></span>
+                <span class="ph-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="10" width="34" height="28" rx="3"/><circle cx="17" cy="20" r="3"/><path d="M41 30l-9-8-13 12"/></svg></span>
                 <small>în curând</small>
               </div>
             </div>
@@ -765,7 +754,7 @@
             <div class="work-thumb">
               <!-- [PERSONALIZEAZĂ · PORTOFOLIU] <img src="images/proiect-3.jpg" alt="Descriere proiect 3" onload="this.previousElementSibling && this.previousElementSibling.remove()"> -->
               <div class="thumb-placeholder">
-                <span class="brainmark" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/><path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/><path d="M24 11v25"/></svg></span>
+                <span class="ph-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="10" width="34" height="28" rx="3"/><circle cx="17" cy="20" r="3"/><path d="M41 30l-9-8-13 12"/></svg></span>
                 <small>în curând</small>
               </div>
             </div>
@@ -782,8 +771,8 @@
         <!-- Rând secundar mic: dovada combinației psiholog + design -->
         <div class="resources-row reveal">
           <div class="resources-card">
-            <span class="brainmark" aria-hidden="true">
-              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/><path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/><path d="M24 11v25"/></svg>
+            <span class="rc-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6h14l7 7v27a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M28 6v7h7"/><path d="M18 26h12M18 32h12M18 20h6"/></svg>
             </span>
             <div class="rc-text">
               <h3>…și materiale clinice</h3>
@@ -806,8 +795,8 @@
             <!-- [PERSONALIZEAZĂ · PORTOFOLIU] Pune o poză de portret, ex. images/carol.jpg
                  <img src="images/carol.jpg" alt="Portret Carol Toros" onload="this.nextElementSibling && this.nextElementSibling.remove()"> -->
             <div class="ph">
-              <span class="brainmark" aria-hidden="true">
-                <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/><path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/><path d="M24 11v25"/></svg>
+              <span class="ph-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="10" width="34" height="28" rx="3"/><circle cx="17" cy="20" r="3"/><path d="M41 30l-9-8-13 12"/></svg>
               </span>
               <small>fotografia ta aici</small>
             </div>
@@ -817,19 +806,14 @@
         <div class="about-text">
           <p class="eyebrow reveal">Despre mine</p>
           <h2 class="reveal">De ce eu?</h2>
-          <p class="reveal">Sunt Carol Toros, psiholog clinician în Timișoara. Am trecut prin exact ce treci tu acum: momentul în care ai diploma și atestatul, dar nu și oamenii care să știe că exiști.</p>
+          <p class="reveal">Sunt Carol Toros, psiholog clinician. Am trecut prin exact ce treci tu acum: momentul în care ai diploma și atestatul, dar nu și oamenii care să știe că exiști.</p>
           <blockquote class="about-quote reveal">„Sunt psiholog, <span>ca tine.</span> Nu ghicesc ce trebuie să conțină site-ul unui cabinet — știu."</blockquote>
           <p class="reveal">Diferența dintre mine și o agenție e simplă: vorbim aceeași limbă. Nu-ți cer să-mi explici ce e psihoterapia, nu te pun să scrii tu textele și nu te sperii cu jargon tehnic. Înțeleg realitatea unui terapeut nou-atestat — inclusiv bugetul.</p>
           <p class="reveal">Combin pregătirea de psiholog cu designul web. Așa ies site-uri care nu doar arată bine, ci și <em>spun</em> ce trebuie, în cuvintele potrivite pentru clienții tăi.</p>
 
           <div class="about-sign reveal">
-            <span class="brainmark" aria-hidden="true">
-              <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/><path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/><path d="M24 11v25"/></svg>
-            </span>
-            <div>
-              <strong>Carol Toros</strong>
-              <small>Psiholog clinician &amp; creator de site-uri · Timișoara</small>
-            </div>
+            <strong>Carol Toros</strong>
+            <small>Psiholog clinician &amp; creator de site-uri</small>
           </div>
         </div>
       </div>
@@ -875,85 +859,30 @@
     </section>
 
     <!-- =====================================================================
-         8 · CONTACT / CTA FINAL
-         [PERSONALIZEAZĂ · CONTACT] înlocuiește email/telefon mai jos.
-         [PERSONALIZEAZĂ · FORMSPREE] vezi comentariul de deasupra <form>.
+         8 · CONTACT / CTA FINAL (fără formular — totul merge pe WhatsApp)
+         [PERSONALIZEAZĂ · CONTACT] email + WhatsApp mai jos.
          ===================================================================== -->
     <section class="contact section-alt" id="contact">
       <div class="container">
-        <div class="contact-intro">
-          <p class="eyebrow reveal">Hai să vorbim</p>
-          <h2 class="reveal">Primul pas e o <em>conversație</em>.</h2>
-          <p class="reveal">Fără presiune și fără angajament. Scrie-mi câteva rânduri despre tine și îți răspund cu următorii pași. Dacă ți-e mai ușor, poți să-mi trimiți direct un email.</p>
+        <div class="contact-card reveal">
+          <p class="eyebrow">Hai să vorbim</p>
+          <h2>Primul pas e o <em>conversație</em>.</h2>
+          <p>Fără presiune și fără angajament. Scrie-mi pe WhatsApp câteva rânduri despre tine și îți răspund cu următorii pași. Ți-am pregătit deja mesajul — trebuie doar să apeși „trimite".</p>
 
-          <ul class="contact-details">
-            <li class="reveal">
-              <span class="ci" aria-hidden="true">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-              </span>
-              <!-- [PERSONALIZEAZĂ · CONTACT] adresa ta de email -->
-              <a href="mailto:contact@toroscarol.ro">contact@toroscarol.ro</a>
-            </li>
-            <li class="reveal">
-              <span class="ci" aria-hidden="true">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15.5v3a2 2 0 0 1-2.2 2 19 19 0 0 1-8.3-3 18.5 18.5 0 0 1-5.7-5.7 19 19 0 0 1-3-8.4A2 2 0 0 1 3.8 1H6.8a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L7.9 8.6a15 15 0 0 0 5.7 5.7l1-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>
-              </span>
-              <!-- [PERSONALIZEAZĂ · CONTACT] telefon (opțional; șterge tot <li> dacă nu-l vrei) -->
-              <span>+40 7xx xxx xxx <small>Timișoara</small></span>
-            </li>
-          </ul>
+          <div class="contact-actions">
+            <!-- [PERSONALIZEAZĂ · WHATSAPP] butonul principal de contact → deschide WhatsApp -->
+            <a href="https://wa.me/40723030195?text=Bun%C4%83%2C%20Carol!%20A%C8%99%20vrea%20un%20site%20de%20prezentare%20pentru%20cabinetul%20meu." target="_blank" rel="noopener" class="btn btn-primary">
+              <svg class="wa-icon" width="22" height="22" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16.04 4C9.93 4 4.98 8.95 4.98 15.06c0 1.95.51 3.86 1.48 5.55L4.9 27l6.56-1.72a11 11 0 0 0 4.57.98h.01c6.11 0 11.06-4.95 11.06-11.06C27.1 8.95 22.15 4 16.04 4zm0 20.24h-.01a9.2 9.2 0 0 1-4.68-1.28l-.34-.2-3.89 1.02 1.04-3.79-.22-.35a9.15 9.15 0 0 1-1.4-4.85c0-5.06 4.12-9.18 9.19-9.18 2.45 0 4.76.96 6.49 2.69a9.13 9.13 0 0 1 2.69 6.5c0 5.06-4.12 9.18-9.18 9.18zm5.04-6.87c-.28-.14-1.63-.8-1.89-.9-.25-.09-.44-.14-.62.14-.18.28-.71.9-.87 1.08-.16.18-.32.2-.6.07-.28-.14-1.17-.43-2.22-1.37-.82-.73-1.37-1.63-1.53-1.91-.16-.28-.02-.43.12-.57.13-.13.28-.32.42-.48.14-.16.18-.28.28-.46.09-.18.05-.35-.02-.48-.07-.14-.62-1.5-.85-2.05-.22-.54-.45-.46-.62-.47-.16-.01-.35-.01-.53-.01s-.48.07-.73.35c-.25.28-.96.94-.96 2.3 0 1.35.98 2.66 1.12 2.84.14.18 1.93 2.95 4.68 4.13.65.28 1.16.45 1.56.58.66.21 1.25.18 1.72.11.53-.08 1.63-.67 1.86-1.31.23-.64.23-1.19.16-1.31-.07-.12-.25-.19-.53-.33z"/></svg>
+              Scrie-mi pe WhatsApp
+            </a>
+          </div>
+
+          <!-- [PERSONALIZEAZĂ · CONTACT] Alternativă: email + numărul afișat -->
+          <p class="contact-alt">Preferi email-ul? <a href="mailto:toroscarol@gmail.com">toroscarol@gmail.com</a><br />
+            sau la telefon / WhatsApp: <a href="https://wa.me/40723030195" target="_blank" rel="noopener">0723 030 195</a></p>
+
+          <p class="contact-fine">Îți răspund personal, de obicei în aceeași zi.</p>
         </div>
-
-        <!-- =================================================================
-             FORMULAR DE CONTACT
-             -----------------------------------------------------------------
-             Un site static NU poate procesa formulare singur. Folosim FORMSPREE
-             (gratuit pentru volume mici) ca să primești mesajele pe email.
-
-             CUM ÎL CONECTEZI (5 minute):
-               1. Intră pe https://formspree.io și fă un cont gratuit.
-               2. Creează un „New form" și pune email-ul pe care vrei să
-                  primești mesajele.
-               3. Formspree îți dă un endpoint de forma:
-                     https://formspree.io/f/xxxxxxx
-               4. [PERSONALIZEAZĂ · FORMSPREE] Înlocuiește mai jos, în atributul
-                  action, textul  https://formspree.io/f/AICI_ENDPOINT_FORMSPREE
-                  cu endpoint-ul tău real.
-               5. Gata. La primul mesaj, Formspree îți cere o confirmare pe email.
-
-             FALLBACK: cât timp NU ai pus endpoint-ul real (linia conține încă
-             „AICI_ENDPOINT_FORMSPREE"), JS-ul din josul paginii deschide automat
-             clientul de email al vizitatorului (mailto) — deci formularul „merge"
-             chiar și neconfigurat. După ce pui endpoint-ul real, trimite prin
-             Formspree (AJAX) și afișează un mesaj de mulțumire, fără reîncărcare.
-             ================================================================= -->
-        <form class="contact-form reveal"
-              id="contactForm"
-              action="https://formspree.io/f/AICI_ENDPOINT_FORMSPREE"
-              method="POST">
-          <div class="field">
-            <label for="name">Numele tău</label>
-            <input type="text" id="name" name="name" autocomplete="name" placeholder="Ex. Ana Popescu" required />
-          </div>
-          <div class="field">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" autocomplete="email" placeholder="ana@exemplu.ro" required />
-          </div>
-          <div class="field">
-            <label for="message">Mesajul tău</label>
-            <textarea id="message" name="message" placeholder="Spune-mi câteva cuvinte despre tine și despre cabinetul tău…" required></textarea>
-          </div>
-          <!-- Subiect predefinit pt. email-urile Formspree (opțional) -->
-          <input type="hidden" name="_subject" value="Mesaj nou de pe site — pachet Prezență" />
-
-          <button type="submit" class="btn btn-primary btn-block">Trimite mesajul <span class="arrow" aria-hidden="true">→</span></button>
-
-          <!-- Mesaje de stare (populează JS-ul) -->
-          <p class="form-msg" id="formOk" role="status">Mulțumesc! Mesajul a plecat. Îți răspund cât de curând. ✦</p>
-          <p class="form-msg" id="formErr" role="alert">Ceva n-a mers. Încearcă din nou sau scrie-mi direct pe email.</p>
-
-          <p class="form-fine">Datele tale rămân între noi. Le folosesc doar ca să-ți răspund.</p>
-        </form>
       </div>
     </section>
   </main>
@@ -963,12 +892,7 @@
        ===================================================================== -->
   <footer class="footer">
     <div class="container">
-      <a href="#hero" class="logo">
-        <span class="brainmark" aria-hidden="true">
-          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="26" height="26"><path d="M24 11c-4-2.4-9.5-1.2-11.6 3-4.3.1-6.6 4.3-4.3 7.6-3.2 2.2-3 7.2 1 9.1-.2 4.2 4.2 6.6 8.2 5.4"/><path d="M24 11c4-2.4 9.5-1.2 11.6 3 4.3.1 6.6 4.3 4.3 7.6 3.2 2.2 3 7.2-1 9.1.2 4.2-4.2 6.6-8.2 5.4"/><path d="M24 11v25"/></svg>
-        </span>
-        Carol&nbsp;Toros
-      </a>
+      <a href="#hero" class="logo">Carol&nbsp;Toros</a>
       <nav class="footer-links" aria-label="Navigație subsol">
         <a href="#oferta">Ofertă</a>
         <a href="#portofoliu">Portofoliu</a>
@@ -977,7 +901,7 @@
         <!-- [PERSONALIZEAZĂ · LINK] -->
         <a href="https://toroscarol.ro" target="_blank" rel="noopener">toroscarol.ro</a>
       </nav>
-      <p class="footer-copy">© <span id="year">2026</span> Carol Toros · Site-uri de prezentare pentru psihologi și psihoterapeuți · Timișoara. Sunt psiholog, ca tine.</p>
+      <p class="footer-copy">© <span id="year">2026</span> Carol Toros · Site-uri de prezentare pentru psihologi și psihoterapeuți. Sunt psiholog, ca tine.</p>
     </div>
   </footer>
 
@@ -1055,62 +979,9 @@
         reveals.forEach(function (el) { el.classList.add("in"); });
       }
 
-      /* ---------- Formular de contact: Formspree cu fallback mailto ---------- */
-      var form = document.getElementById("contactForm");
-      var okMsg = document.getElementById("formOk");
-      var errMsg = document.getElementById("formErr");
-      // [PERSONALIZEAZĂ · CONTACT] email-ul pe care merge fallback-ul mailto:
-      var FALLBACK_EMAIL = "contact@toroscarol.ro";
-
-      function resetMsgs() {
-        okMsg.classList.remove("ok");
-        errMsg.classList.remove("err");
-      }
-
-      form.addEventListener("submit", function (e) {
-        var action = form.getAttribute("action") || "";
-        var notConfigured = action.indexOf("AICI_ENDPOINT_FORMSPREE") !== -1;
-
-        // ----- FALLBACK: Formspree încă neconfigurat → deschide mailto -----
-        if (notConfigured) {
-          e.preventDefault();
-          resetMsgs();
-          var name = encodeURIComponent(form.name.value || "");
-          var email = encodeURIComponent(form.email.value || "");
-          var msg = encodeURIComponent(form.message.value || "");
-          var body = "Nume: " + name + "%0D%0AEmail: " + email + "%0D%0A%0D%0A" + msg;
-          window.location.href = "mailto:" + FALLBACK_EMAIL +
-            "?subject=" + encodeURIComponent("Mesaj de pe site — pachet Prezență") +
-            "&body=" + body;
-          return;
-        }
-
-        // ----- Formspree configurat → trimite prin AJAX, fără reîncărcare -----
-        e.preventDefault();
-        resetMsgs();
-        var btn = form.querySelector('button[type="submit"]');
-        var original = btn.innerHTML;
-        btn.disabled = true;
-        btn.textContent = "Se trimite…";
-
-        fetch(action, {
-          method: "POST",
-          body: new FormData(form),
-          headers: { Accept: "application/json" }
-        }).then(function (res) {
-          if (res.ok) {
-            form.reset();
-            okMsg.classList.add("ok");
-          } else {
-            errMsg.classList.add("err");
-          }
-        }).catch(function () {
-          errMsg.classList.add("err");
-        }).finally(function () {
-          btn.disabled = false;
-          btn.innerHTML = original;
-        });
-      });
+      /* ---------- Contact ---------- */
+      /* Nu există formular. Toate butoanele de contact sunt link-uri wa.me
+         (deschid WhatsApp direct), deci nu e nevoie de JavaScript aici. */
     })();
   </script>
 </body>
