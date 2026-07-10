@@ -354,7 +354,8 @@
       border: 1px solid var(--line); box-shadow: var(--shadow-md);
       display: flex; align-items: center; justify-content: center;
     }
-    .about-portrait .frame img { width: 100%; height: 100%; object-fit: cover; }
+    /* Fotografia „Despre mine": umple rama, cu fața păstrată sus (portret cutout) */
+    .about-portrait .frame img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
     .about-portrait .ph { display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--sage-dark); text-align: center; padding: 24px; }
     .about-portrait .ph .ph-icon { width: 56px; }
     .about-text h2 { font-size: clamp(1.9rem, 3.4vw, 2.7rem); margin-bottom: 22px; }
@@ -362,9 +363,6 @@
     .about-text p:last-of-type { margin-bottom: 0; }
     .about-quote { font-family: var(--serif); font-style: italic; font-size: clamp(1.3rem, 2.4vw, 1.7rem); color: var(--ink); line-height: 1.4; border-left: 3px solid var(--sage); padding-left: 22px; margin: 28px 0; }
     .about-quote span { color: var(--sage); }
-    .about-sign { margin-top: 26px; padding-left: 18px; border-left: 3px solid var(--sage); }
-    .about-sign strong { font-family: var(--serif); font-size: 1.1rem; color: var(--ink); font-weight: 600; }
-    .about-sign small { display: block; font-size: .88rem; color: var(--body); }
 
     /* =====================================================================
        FAQ (acordeon)
@@ -478,9 +476,7 @@
        ===================================================================== -->
   <header class="nav" id="nav">
     <div class="container">
-      <!-- Wordmark: doar numele, fără logo grafic -->
-      <a href="#hero" class="logo" aria-label="Carol Toros — acasă">Carol&nbsp;Toros</a>
-
+      <!-- Fără nume/logo în header, la cererea clientului. -->
       <nav aria-label="Navigație principală">
         <ul class="nav-links" id="navLinks">
           <li><a href="#oferta">Ofertă</a></li>
@@ -570,7 +566,7 @@
         <div class="offer-card reveal">
           <div class="offer-top">
             <span class="badge">Un singur pachet, totul inclus</span>
-            <h2>Pachetul <em>Prezență</em></h2>
+            <h2>Pachetul <em>Prezența Online</em></h2>
             <p class="offer-sub">Un site de prezentare complet, de 4 pagini, scris și construit de la zero pentru cabinetul tău.</p>
             <div class="price">
               <span class="amount">320</span>
@@ -627,7 +623,7 @@
                 <svg class="wa-icon" width="20" height="20" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16.04 4C9.93 4 4.98 8.95 4.98 15.06c0 1.95.51 3.86 1.48 5.55L4.9 27l6.56-1.72a11 11 0 0 0 4.57.98h.01c6.11 0 11.06-4.95 11.06-11.06C27.1 8.95 22.15 4 16.04 4zm0 20.24h-.01a9.2 9.2 0 0 1-4.68-1.28l-.34-.2-3.89 1.02 1.04-3.79-.22-.35a9.15 9.15 0 0 1-1.4-4.85c0-5.06 4.12-9.18 9.19-9.18 2.45 0 4.76.96 6.49 2.69a9.13 9.13 0 0 1 2.69 6.5c0 5.06-4.12 9.18-9.18 9.18zm5.04-6.87c-.28-.14-1.63-.8-1.89-.9-.25-.09-.44-.14-.62.14-.18.28-.71.9-.87 1.08-.16.18-.32.2-.6.07-.28-.14-1.17-.43-2.22-1.37-.82-.73-1.37-1.63-1.53-1.91-.16-.28-.02-.43.12-.57.13-.13.28-.32.42-.48.14-.16.18-.28.28-.46.09-.18.05-.35-.02-.48-.07-.14-.62-1.5-.85-2.05-.22-.54-.45-.46-.62-.47-.16-.01-.35-.01-.53-.01s-.48.07-.73.35c-.25.28-.96.94-.96 2.3 0 1.35.98 2.66 1.12 2.84.14.18 1.93 2.95 4.68 4.13.65.28 1.16.45 1.56.58.66.21 1.25.18 1.72.11.53-.08 1.63-.67 1.86-1.31.23-.64.23-1.19.16-1.31-.07-.12-.25-.19-.53-.33z"/></svg>
                 Vreau site-ul meu</a>
               <!-- Notă discretă despre ce NU intră în preț, formulată reasigurant -->
-              <p class="offer-note">Domeniul și găzduirea se plătesc separat, direct la furnizor (în jur de câteva zeci de lei pe an) — dar <strong>te conduc eu prin toată configurarea,</strong> nu te las să te descurci singur.</p>
+              <p class="offer-note">Domeniul și găzduirea se plătesc separat, direct la furnizor (în jur de 250 lei/an) — dar <strong>te conduc eu prin toată configurarea,</strong> nu te las să te descurci singur.</p>
             </div>
           </div>
         </div>
@@ -804,14 +800,18 @@
       <div class="container">
         <div class="about-portrait reveal">
           <div class="frame">
-            <!-- [PERSONALIZEAZĂ · PORTOFOLIU] Pune o poză de portret, ex. images/carol.jpg
-                 <img src="images/carol.jpg" alt="Portret Carol Toros" onload="this.nextElementSibling && this.nextElementSibling.remove()"> -->
             <div class="ph">
               <span class="ph-icon" aria-hidden="true">
                 <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="10" width="34" height="28" rx="3"/><circle cx="17" cy="20" r="3"/><path d="M41 30l-9-8-13 12"/></svg>
               </span>
-              <small>fotografia ta aici</small>
+              <small>profilcarol.png</small>
             </div>
+            <!-- [PERSONALIZEAZĂ · PORTOFOLIU] Fotografia „Despre mine".
+                 Încearcă întâi images/profilcarol.png, apoi profilcarol.png din rădăcină,
+                 ca să funcționeze indiferent unde ai urcat fișierul. -->
+            <img src="images/profilcarol.png" alt="Carol Toros — psiholog clinician" loading="lazy"
+                 onload="this.previousElementSibling && this.previousElementSibling.remove()"
+                 onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='profilcarol.png';}else{this.remove();}" />
           </div>
         </div>
 
@@ -822,11 +822,6 @@
           <blockquote class="about-quote reveal">„Sunt psiholog, <span>ca tine.</span> Nu ghicesc ce trebuie să conțină site-ul unui cabinet — știu."</blockquote>
           <p class="reveal">Diferența dintre mine și o agenție e simplă: vorbim aceeași limbă. Nu-ți cer să-mi explici ce e psihoterapia, nu te pun să scrii tu textele și nu te sperii cu jargon tehnic. Înțeleg realitatea unui terapeut nou-atestat — inclusiv bugetul.</p>
           <p class="reveal">Combin pregătirea de psiholog cu designul web. Așa ies site-uri care nu doar arată bine, ci și <em>spun</em> ce trebuie, în cuvintele potrivite pentru clienții tăi.</p>
-
-          <div class="about-sign reveal">
-            <strong>Carol Toros</strong>
-            <small>Psiholog clinician &amp; creator de site-uri</small>
-          </div>
         </div>
       </div>
     </section>
@@ -854,7 +849,7 @@
 
           <details class="faq-item reveal">
             <summary>Ce înseamnă „costul găzduirii" și cât e?<span class="faq-icon" aria-hidden="true"></span></summary>
-            <div class="faq-answer"><p>Ca să fie site-ul online ai nevoie de două lucruri: un <b>domeniu</b> (adresa, ex. numele-tău.ro) și <b>găzduire</b> (spațiul unde stă site-ul). Acestea se plătesc anual, direct la furnizor — de regulă câteva zeci de lei pe an, nu la mine. Costul e mic, dar recurent. Partea bună: <b>te ghidez pas cu pas</b> prin tot procesul, nu te las să te descurci singur.</p></div>
+            <div class="faq-answer"><p>Ca să fie site-ul online ai nevoie de două lucruri: un <b>domeniu</b> (adresa, ex. numele-tău.ro) și <b>găzduire</b> (spațiul unde stă site-ul). Acestea se plătesc anual, direct la furnizor — în jur de 250 lei/an, nu la mine. Costul e mic, dar recurent. Partea bună: <b>te ghidez pas cu pas</b> prin tot procesul, nu te las să te descurci singur.</p></div>
           </details>
 
           <details class="faq-item reveal">
