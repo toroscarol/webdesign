@@ -1,0 +1,766 @@
+<!--
+  =====================================================================
+  Formular de intake / brief — Carol Toros
+  O pagină separată, self-contained, care adună informații de la un
+  posibil client (psiholog) și le trimite ție pe email prin Formspree.
+  La trimitere, răspunsurile sunt compilate automat într-un BRIEF
+  structurat (gata de lipit în AI) inclus în același email.
+  ---------------------------------------------------------------------
+  CE TREBUIE SĂ PERSONALIZEZI (caută [PERSONALIZEAZĂ]):
+    1. Endpoint-ul Formspree   → [PERSONALIZEAZĂ · FORMSPREE]
+    2. Emailul tău (fallback)  → [PERSONALIZEAZĂ · EMAIL]
+    3. WhatsApp (ecran final)  → [PERSONALIZEAZĂ · WHATSAPP]
+  Se urcă pe Vercel lângă index.html; linkul va fi  domeniul-tau.ro/brief.html
+  =====================================================================
+-->
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hai să începem · Formular pentru site-ul tău</title>
+  <meta name="description" content="Câteva întrebări despre tine și cabinetul tău, ca să-ți construiesc un site de prezentare pe măsură. Nu trebuie să ai nimic pregătit." />
+  <meta name="robots" content="noindex" /><!-- formular privat, nu-l indexăm în Google -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%238A9B7A'/%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg:#FAF7F2; --bg-alt:#F4EFE6; --card:#FFFFFF;
+      --sage:#8A9B7A; --sage-dark:#6E7F5E; --sage-tint:#EAEEE2;
+      --ink:#2B2926; --body:#6B6560; --line:#E7E0D5;
+      --shadow-sm:0 1px 2px rgba(43,41,38,.04),0 1px 3px rgba(43,41,38,.03);
+      --shadow-md:0 14px 34px -16px rgba(43,41,38,.16);
+      --shadow-lg:0 30px 70px -24px rgba(43,41,38,.22);
+      --radius:22px; --pill:999px;
+      --serif:"Playfair Display",Georgia,"Times New Roman",serif;
+      --sans:Helvetica,Arial,"Helvetica Neue",system-ui,sans-serif;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    html { -webkit-text-size-adjust:100%; }
+    body { font-family:var(--sans); font-size:16.5px; line-height:1.6; color:var(--body); background:var(--bg); -webkit-font-smoothing:antialiased; }
+    h1,h2,h3,legend,.serif { font-family:var(--serif); color:var(--ink); font-weight:600; line-height:1.18; letter-spacing:-.01em; }
+    em,.accent { font-style:italic; color:var(--sage); font-weight:500; }
+    a { color:var(--sage-dark); }
+    :focus-visible { outline:2px solid var(--sage); outline-offset:3px; border-radius:6px; }
+
+    .wrap { width:100%; max-width:760px; margin-inline:auto; padding:clamp(20px,5vw,56px) 20px 80px; }
+
+    /* ---- Top / brand mic (fără nume, conform preferinței) ---- */
+    .top { text-align:center; margin-bottom:26px; }
+    .top .kicker { display:inline-block; font-size:.78rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--sage-dark); }
+
+    /* ---- Card principal ---- */
+    .card { background:var(--card); border:1px solid var(--line); border-radius:28px; box-shadow:var(--shadow-lg); overflow:hidden; }
+
+    /* ---- Progres ---- */
+    .progress-wrap { padding:22px clamp(22px,4vw,40px) 0; }
+    .progress { height:7px; background:var(--sage-tint); border-radius:var(--pill); overflow:hidden; }
+    .progress-bar { height:100%; width:0; background:var(--sage); border-radius:var(--pill); transition:width .35s ease; }
+    .progress-label { margin-top:9px; font-size:.82rem; color:var(--body); letter-spacing:.02em; }
+
+    .panel { padding:clamp(24px,4vw,40px); }
+
+    /* ---- Ecran de bun venit ---- */
+    .welcome h1 { font-size:clamp(1.9rem,4.6vw,2.7rem); }
+    .welcome .lead { margin-top:16px; font-size:1.08rem; }
+    .welcome ul { list-style:none; margin:24px 0 8px; display:grid; gap:12px; }
+    .welcome li { display:flex; gap:12px; align-items:flex-start; font-size:1rem; color:var(--ink); }
+    .welcome li svg { flex:none; margin-top:3px; color:var(--sage); }
+    .welcome .time { margin-top:20px; font-size:.92rem; color:var(--body); }
+
+    /* ---- Pași / întrebări ---- */
+    .step legend { font-size:clamp(1.4rem,3vw,1.9rem); margin-bottom:6px; padding:0; }
+    .step .step-intro { margin-bottom:26px; font-size:1rem; color:var(--body); }
+    .field { margin-bottom:24px; }
+    .field > label.q, .field > .q { display:block; font-weight:600; color:var(--ink); margin-bottom:4px; font-size:1.02rem; }
+    .field .help { display:block; font-size:.88rem; color:var(--body); margin-bottom:10px; }
+    .field .req { color:var(--sage-dark); font-weight:700; }
+
+    input[type=text], input[type=email], input[type=tel], textarea, select {
+      width:100%; font-family:var(--sans); font-size:1rem; color:var(--ink);
+      background:#FDFCFA; border:1px solid var(--line); border-radius:14px; padding:13px 15px;
+      transition:border-color .2s, box-shadow .2s, background .2s;
+    }
+    textarea { min-height:110px; resize:vertical; }
+    select { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B6560' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 15px center; padding-right:42px; }
+    input:focus, textarea:focus, select:focus { outline:none; border-color:var(--sage); background:#fff; box-shadow:0 0 0 3px rgba(138,155,122,.14); }
+    input.invalid, textarea.invalid, select.invalid { border-color:#C9765B; box-shadow:0 0 0 3px rgba(201,118,91,.12); }
+
+    /* ---- Chip-uri (radio / checkbox) ---- */
+    .chips { display:flex; flex-wrap:wrap; gap:10px; }
+    .chip { display:inline-flex; align-items:center; gap:8px; padding:11px 17px; border:1px solid var(--line); border-radius:var(--pill); cursor:pointer; background:#fff; font-size:.95rem; color:var(--ink); transition:all .15s; user-select:none; }
+    .chip:hover { border-color:var(--sage); }
+    .chip input { position:absolute; opacity:0; width:1px; height:1px; pointer-events:none; }
+    .chip:has(input:checked) { background:var(--sage-tint); border-color:var(--sage); color:var(--sage-dark); font-weight:600; }
+    .chip:has(input:focus-visible) { outline:2px solid var(--sage); outline-offset:2px; }
+    .chip .tick { width:16px; height:16px; display:none; }
+    .chip:has(input:checked) .tick { display:inline-block; }
+
+    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    @media (max-width:560px){ .grid-2 { grid-template-columns:1fr; } }
+
+    /* ---- Butoane ---- */
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:9px; font-family:var(--sans); font-size:1rem; font-weight:600; padding:14px 30px; border-radius:var(--pill); border:1px solid transparent; cursor:pointer; transition:transform .15s, box-shadow .2s, background .2s, color .2s, border-color .2s; }
+    .btn-primary { background:var(--sage); color:#fff; box-shadow:0 10px 24px -12px rgba(138,155,122,.9); }
+    .btn-primary:hover { background:var(--sage-dark); transform:translateY(-2px); }
+    .btn-ghost { background:transparent; color:var(--ink); border-color:var(--line); }
+    .btn-ghost:hover { border-color:var(--sage); color:var(--sage-dark); background:#fff; }
+    .btn:disabled { opacity:.6; cursor:default; transform:none; }
+
+    .nav { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 clamp(24px,4vw,40px) clamp(24px,4vw,40px); }
+    .nav .spacer { flex:1; }
+
+    /* ---- Mesaje / ecran final ---- */
+    .msg { margin:0 clamp(24px,4vw,40px) 20px; padding:14px 18px; border-radius:14px; font-size:.95rem; display:none; }
+    .msg.err { display:block; background:#FBEFEA; color:#B5573B; border:1px solid #F0D2C6; }
+    .done { text-align:center; padding:clamp(40px,7vw,70px) clamp(24px,5vw,48px); }
+    .done .mark { width:66px; height:66px; border-radius:var(--pill); background:var(--sage-tint); color:var(--sage-dark); display:flex; align-items:center; justify-content:center; margin:0 auto 22px; border:1px solid rgba(138,155,122,.3); }
+    .done h2 { font-size:clamp(1.7rem,3.6vw,2.3rem); }
+    .done p { margin:14px auto 0; max-width:42ch; }
+    .done .btn { margin-top:28px; }
+
+    .footnote { text-align:center; margin-top:22px; font-size:.84rem; color:var(--body); opacity:.85; }
+
+    [hidden] { display:none !important; }
+    @media (prefers-reduced-motion:reduce){ *{transition-duration:.001ms!important;} }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <span class="kicker">✦ Site de prezentare pentru cabinetul tău</span>
+    </div>
+
+    <!-- [PERSONALIZEAZĂ · FORMSPREE] pune endpoint-ul tău în action (vezi comentariul de jos) -->
+    <form class="card" id="briefForm" action="https://formspree.io/f/AICI_ENDPOINT_FORMSPREE" method="POST" novalidate>
+
+      <!-- Câmp ascuns: aici JS pune BRIEFUL compilat, ca să-ți vină pe email gata structurat -->
+      <input type="hidden" name="Brief pentru AI" id="briefField" />
+      <input type="hidden" name="_subject" id="subjectField" value="Brief nou de la un client" />
+
+      <!-- Progres (ascuns pe ecranul de bun venit) -->
+      <div class="progress-wrap" id="progressWrap" hidden>
+        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+        <p class="progress-label" id="progressLabel">Pasul 1 din 6</p>
+      </div>
+
+      <!-- ============ ECRAN DE BUN VENIT ============ -->
+      <div class="panel welcome" id="welcome">
+        <h1>Hai să construim site-ul <em>tău</em>.</h1>
+        <p class="lead">Răspunde la câteva întrebări despre tine și despre cabinetul tău. Pe baza lor îți scriu textele și îți construiesc site-ul — tu nu trebuie să vii cu nimic pregătit.</p>
+        <ul>
+          <li><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5l4 4 8-9"/></svg> Durează 7–10 minute, în ritmul tău.</li>
+          <li><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5l4 4 8-9"/></svg> Majoritatea întrebărilor sunt opționale — unde nu ești sigur(ă), alege „nu știu / decide tu".</li>
+          <li><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5l4 4 8-9"/></svg> Nu există răspunsuri greșite. Scrie cum îți vine.</li>
+        </ul>
+        <p class="time">Gata? Să începem.</p>
+        <div style="margin-top:22px;">
+          <button type="button" class="btn btn-primary" data-go="1">Începe <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+
+      <!-- ============ PASUL 1 · CINE EȘTI ============ -->
+      <fieldset class="panel step" data-step="1" hidden>
+        <legend>Cine ești</legend>
+        <p class="step-intro">Datele de bază, ca să te pot contacta și ca site-ul să pornească de la realitatea ta.</p>
+
+        <div class="grid-2">
+          <div class="field">
+            <label class="q" for="nume">Nume și prenume <span class="req">*</span></label>
+            <input type="text" id="nume" name="Nume" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label class="q" for="titulatura">Ești… <span class="req">*</span></label>
+            <select id="titulatura" name="Titulatură" required>
+              <option value="">Alege…</option>
+              <option>Psiholog clinician</option>
+              <option>Psihoterapeut</option>
+              <option>Psihoterapeut în formare</option>
+              <option>Consilier psihologic</option>
+              <option>Psiholog (altă specializare)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label class="q" for="email">Email <span class="req">*</span></label>
+            <span class="help">Aici îți răspund cu următorii pași.</span>
+            <input type="email" id="email" name="Email" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label class="q" for="telefon">Telefon / WhatsApp <span class="req">*</span></label>
+            <input type="tel" id="telefon" name="Telefon" autocomplete="tel" placeholder="07xx xxx xxx" required />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label class="q" for="oras">Orașul în care profesezi</label>
+            <input type="text" id="oras" name="Oraș" />
+          </div>
+          <div class="field">
+            <span class="q">De cât timp profesezi?</span>
+            <div class="chips" role="radiogroup" aria-label="Experiență">
+              <label class="chip"><input type="radio" name="Experiență" value="Sunt la început" /><span>Sunt la început</span></label>
+              <label class="chip"><input type="radio" name="Experiență" value="Sub 1 an" /><span>Sub 1 an</span></label>
+              <label class="chip"><input type="radio" name="Experiență" value="1–3 ani" /><span>1–3 ani</span></label>
+              <label class="chip"><input type="radio" name="Experiență" value="Peste 3 ani" /><span>Peste 3 ani</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="q">Cum lucrezi?</span>
+          <div class="chips" role="radiogroup" aria-label="Mod de lucru">
+            <label class="chip"><input type="radio" name="Mod de lucru" value="La cabinet" /><span>La cabinet</span></label>
+            <label class="chip"><input type="radio" name="Mod de lucru" value="Online" /><span>Online</span></label>
+            <label class="chip"><input type="radio" name="Mod de lucru" value="Ambele" /><span>Ambele</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="q" for="domeniu">Ai un nume de domeniu în minte?</label>
+          <span class="help">Opțional. Ex. numele-tau.ro — dacă nu, te ajut eu să alegi.</span>
+          <input type="text" id="domeniu" name="Domeniu dorit" placeholder="numele-tau.ro" />
+        </div>
+      </fieldset>
+
+      <!-- ============ PASUL 2 · DESPRE TINE ============ -->
+      <fieldset class="panel step" data-step="2" hidden>
+        <legend>Despre tine</legend>
+        <p class="step-intro">Astea mă ajută să scriu pagina „Despre mine" cu vocea ta, nu una generică. Scrie liber — rafinez eu.</p>
+
+        <div class="field">
+          <label class="q" for="formare">Ce formare ai și ce abordare folosești?</label>
+          <span class="help">Ex. „masterat în psihologie clinică, formare în terapie sistemică". Dacă nu știi cum să formulezi, scrie simplu.</span>
+          <textarea id="formare" name="Formare / abordare"></textarea>
+        </div>
+
+        <div class="field">
+          <label class="q" for="poveste">De ce ai ales să fii psiholog? Povestea ta, pe scurt.</label>
+          <span class="help">Câteva rânduri. E cea mai valoroasă materie primă pentru un text autentic.</span>
+          <textarea id="poveste" name="Poveste / motivație"></textarea>
+        </div>
+
+        <div class="field">
+          <span class="q">Cum ești cu clienții tăi?</span>
+          <span class="help">Alege câte vrei.</span>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="Stil relațional" value="Cald / empatic" /><span>Cald / empatic</span></label>
+            <label class="chip"><input type="checkbox" name="Stil relațional" value="Calm" /><span>Calm</span></label>
+            <label class="chip"><input type="checkbox" name="Stil relațional" value="Direct" /><span>Direct</span></label>
+            <label class="chip"><input type="checkbox" name="Stil relațional" value="Structurat" /><span>Structurat</span></label>
+            <label class="chip"><input type="checkbox" name="Stil relațional" value="Blând" /><span>Blând</span></label>
+            <label class="chip"><input type="checkbox" name="Stil relațional" value="Practic" /><span>Practic</span></label>
+            <label class="chip"><input type="checkbox" name="Stil relațional" value="Cu umor" /><span>Cu umor</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="q" for="diferentiator">Cu ce rămâne cineva după ce lucrează cu tine? Ce te face diferit(ă)?</label>
+          <textarea id="diferentiator" name="Diferențiator"></textarea>
+        </div>
+      </fieldset>
+
+      <!-- ============ PASUL 3 · SERVICII ============ -->
+      <fieldset class="panel step" data-step="3" hidden>
+        <legend>Serviciile tale</legend>
+        <p class="step-intro">Ce oferi și pentru cine — ca pagina „Servicii" să fie clară.</p>
+
+        <div class="field">
+          <span class="q">Cu cine lucrezi?</span>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="Lucrează cu" value="Adulți (individual)" /><span>Adulți (individual)</span></label>
+            <label class="chip"><input type="checkbox" name="Lucrează cu" value="Cupluri" /><span>Cupluri</span></label>
+            <label class="chip"><input type="checkbox" name="Lucrează cu" value="Adolescenți" /><span>Adolescenți</span></label>
+            <label class="chip"><input type="checkbox" name="Lucrează cu" value="Copii" /><span>Copii</span></label>
+            <label class="chip"><input type="checkbox" name="Lucrează cu" value="Familii" /><span>Familii</span></label>
+            <label class="chip"><input type="checkbox" name="Lucrează cu" value="Grupuri" /><span>Grupuri</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="q">Pe ce teme / problematici?</span>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="Teme" value="Anxietate" /><span>Anxietate</span></label>
+            <label class="chip"><input type="checkbox" name="Teme" value="Depresie" /><span>Depresie</span></label>
+            <label class="chip"><input type="checkbox" name="Teme" value="Traumă" /><span>Traumă</span></label>
+            <label class="chip"><input type="checkbox" name="Teme" value="Relații" /><span>Relații</span></label>
+            <label class="chip"><input type="checkbox" name="Teme" value="Stimă de sine" /><span>Stimă de sine</span></label>
+            <label class="chip"><input type="checkbox" name="Teme" value="Burnout / stres" /><span>Burnout / stres</span></label>
+            <label class="chip"><input type="checkbox" name="Teme" value="Doliu" /><span>Doliu</span></label>
+            <label class="chip"><input type="checkbox" name="Teme" value="Dezvoltare personală" /><span>Dezvoltare personală</span></label>
+            <label class="chip"><input type="checkbox" name="Teme" value="Parenting" /><span>Parenting</span></label>
+          </div>
+          <div style="margin-top:12px;">
+            <input type="text" name="Alte teme" placeholder="Alte teme (opțional)" />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <span class="q">Ședințele sunt…</span>
+            <div class="chips" role="radiogroup" aria-label="Format ședințe">
+              <label class="chip"><input type="radio" name="Format ședințe" value="Față în față" /><span>Față în față</span></label>
+              <label class="chip"><input type="radio" name="Format ședințe" value="Online" /><span>Online</span></label>
+              <label class="chip"><input type="radio" name="Format ședințe" value="Ambele" /><span>Ambele</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label class="q" for="pret">Prețul unei ședințe</label>
+            <span class="help">Opțional.</span>
+            <input type="text" id="pret" name="Preț ședință" placeholder="ex. 200 lei" />
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="q">Afișăm prețul pe site?</span>
+          <div class="chips" role="radiogroup" aria-label="Afișare preț">
+            <label class="chip"><input type="radio" name="Afișare preț" value="Da" /><span>Da</span></label>
+            <label class="chip"><input type="radio" name="Afișare preț" value="Nu" /><span>Nu</span></label>
+            <label class="chip"><input type="radio" name="Afișare preț" value="Decide tu" /><span>Decide tu</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="q">Oferi o primă ședință de cunoaștere?</span>
+          <div class="chips" role="radiogroup" aria-label="Primă ședință">
+            <label class="chip"><input type="radio" name="Primă ședință" value="Da, gratuită" /><span>Da, gratuită</span></label>
+            <label class="chip"><input type="radio" name="Primă ședință" value="Da, redusă" /><span>Da, redusă</span></label>
+            <label class="chip"><input type="radio" name="Primă ședință" value="Nu" /><span>Nu</span></label>
+            <label class="chip"><input type="radio" name="Primă ședință" value="Încă nu știu" /><span>Încă nu știu</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="q">Cum vrei să te contacteze clienții?</span>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="Preferință contact" value="WhatsApp" /><span>WhatsApp</span></label>
+            <label class="chip"><input type="checkbox" name="Preferință contact" value="Telefon" /><span>Telefon</span></label>
+            <label class="chip"><input type="checkbox" name="Preferință contact" value="Email" /><span>Email</span></label>
+            <label class="chip"><input type="checkbox" name="Preferință contact" value="Formular" /><span>Formular</span></label>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- ============ PASUL 4 · TON & MESAJ ============ -->
+      <fieldset class="panel step" data-step="4" hidden>
+        <legend>Tonul &amp; mesajul</legend>
+        <p class="step-intro">Cum vrei să „sune" site-ul și ce să rămână cu vizitatorul.</p>
+
+        <div class="field">
+          <label class="q" for="simtire">Ce vrei să simtă cineva când intră pe site?</label>
+          <span class="help">2–3 cuvinte. Ex. „siguranță, căldură, încredere".</span>
+          <input type="text" id="simtire" name="Senzație dorită" />
+        </div>
+
+        <div class="field">
+          <span class="q">Tonul textului</span>
+          <div class="chips" role="radiogroup" aria-label="Ton">
+            <label class="chip"><input type="radio" name="Ton" value="Cald & apropiat" /><span>Cald &amp; apropiat</span></label>
+            <label class="chip"><input type="radio" name="Ton" value="Echilibrat" /><span>Echilibrat</span></label>
+            <label class="chip"><input type="radio" name="Ton" value="Profesional & sobru" /><span>Profesional &amp; sobru</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="q">Cum te adresezi vizitatorului?</span>
+          <div class="chips" role="radiogroup" aria-label="Adresare">
+            <label class="chip"><input type="radio" name="Adresare" value="Cu „tu”" /><span>Cu „tu”</span></label>
+            <label class="chip"><input type="radio" name="Adresare" value="Cu „dumneavoastră”" /><span>Cu „dumneavoastră"</span></label>
+            <label class="chip"><input type="radio" name="Adresare" value="Decide tu" /><span>Decide tu</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="q" for="mesajcheie">Dacă cineva reține un singur lucru de pe site, care să fie?</label>
+          <textarea id="mesajcheie" name="Mesaj cheie"></textarea>
+        </div>
+
+        <div class="field">
+          <span class="q">Ce vrei să facă vizitatorul?</span>
+          <div class="chips" role="radiogroup" aria-label="Îndemn">
+            <label class="chip"><input type="radio" name="Îndemn principal" value="Să-mi scrie pe WhatsApp" /><span>Să-mi scrie pe WhatsApp</span></label>
+            <label class="chip"><input type="radio" name="Îndemn principal" value="Să mă sune" /><span>Să mă sune</span></label>
+            <label class="chip"><input type="radio" name="Îndemn principal" value="Să completeze un formular" /><span>Formular</span></label>
+            <label class="chip"><input type="radio" name="Îndemn principal" value="Să-mi scrie pe email" /><span>Email</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="q" for="cuvinte">Cuvinte sau expresii pe care le folosești des — sau pe care NU vrei să apară.</label>
+          <textarea id="cuvinte" name="Cuvinte de folosit / evitat"></textarea>
+        </div>
+
+        <div class="field">
+          <span class="q">Ai deja texte scrise?</span>
+          <div class="chips" role="radiogroup" aria-label="Texte existente">
+            <label class="chip"><input type="radio" name="Are texte" value="Da, le am" /><span>Da, le am</span></label>
+            <label class="chip"><input type="radio" name="Are texte" value="Parțial" /><span>Parțial</span></label>
+            <label class="chip"><input type="radio" name="Are texte" value="Nu, scrii tu" /><span>Nu, scrii tu</span></label>
+          </div>
+          <div style="margin-top:12px;">
+            <textarea name="Texte existente (lipite)" placeholder="Dacă ai ceva scris, lipește aici (opțional)."></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- ============ PASUL 5 · DESIGN ============ -->
+      <fieldset class="panel step" data-step="5" hidden>
+        <legend>Aspect &amp; <em>atmosferă</em></legend>
+        <p class="step-intro">Nu trebuie să te pricepi la design — alege ce ți se potrivește, restul mă ocup eu.</p>
+
+        <div class="field">
+          <span class="q">Ce atmosferă ți se potrivește?</span>
+          <div class="chips" role="radiogroup" aria-label="Atmosferă">
+            <label class="chip"><input type="radio" name="Atmosferă" value="Calm & minimalist" /><span>Calm &amp; minimalist</span></label>
+            <label class="chip"><input type="radio" name="Atmosferă" value="Cald & uman" /><span>Cald &amp; uman</span></label>
+            <label class="chip"><input type="radio" name="Atmosferă" value="Profesional & clar" /><span>Profesional &amp; clar</span></label>
+            <label class="chip"><input type="radio" name="Atmosferă" value="Natural & organic" /><span>Natural &amp; organic</span></label>
+            <label class="chip"><input type="radio" name="Atmosferă" value="Nu știu, decide tu" /><span>Nu știu, decide tu</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="q">Spre ce culori te înclini?</span>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="Culori preferate" value="Tonuri calde" /><span>Tonuri calde</span></label>
+            <label class="chip"><input type="checkbox" name="Culori preferate" value="Tonuri reci" /><span>Tonuri reci</span></label>
+            <label class="chip"><input type="checkbox" name="Culori preferate" value="Neutre / pământii" /><span>Neutre / pământii</span></label>
+            <label class="chip"><input type="checkbox" name="Culori preferate" value="Verde" /><span>Verde</span></label>
+            <label class="chip"><input type="checkbox" name="Culori preferate" value="Albastru" /><span>Albastru</span></label>
+            <label class="chip"><input type="checkbox" name="Culori preferate" value="Teracotă / piersică" /><span>Teracotă / piersică</span></label>
+            <label class="chip"><input type="checkbox" name="Culori preferate" value="Nu știu" /><span>Nu știu</span></label>
+          </div>
+          <div style="margin-top:12px;">
+            <input type="text" name="Culori de evitat" placeholder="Culori de evitat (opțional)" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="q" for="referinte">Site-uri care îți plac</label>
+          <span class="help">Opțional. 1–3 linkuri și, pe scurt, ce îți place la ele (pot fi din orice domeniu).</span>
+          <textarea id="referinte" name="Referințe design"></textarea>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <span class="q">Ai un logo?</span>
+            <div class="chips" role="radiogroup" aria-label="Logo">
+              <label class="chip"><input type="radio" name="Logo" value="Da, îl trimit" /><span>Da, îl trimit</span></label>
+              <label class="chip"><input type="radio" name="Logo" value="Nu, dar vreau unul simplu" /><span>Nu, vreau unul</span></label>
+              <label class="chip"><input type="radio" name="Logo" value="Nu e nevoie" /><span>Nu e nevoie</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <span class="q">Ai poze profesionale?</span>
+            <div class="chips" role="radiogroup" aria-label="Poze">
+              <label class="chip"><input type="radio" name="Poze" value="Da (portret + cabinet)" /><span>Da</span></label>
+              <label class="chip"><input type="radio" name="Poze" value="Doar portret" /><span>Doar portret</span></label>
+              <label class="chip"><input type="radio" name="Poze" value="Nu încă" /><span>Nu încă</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="q">Stil de litere</span>
+          <div class="chips" role="radiogroup" aria-label="Stil litere">
+            <label class="chip"><input type="radio" name="Stil litere" value="Elegant (serif)" /><span>Elegant (serif)</span></label>
+            <label class="chip"><input type="radio" name="Stil litere" value="Modern (sans)" /><span>Modern (sans)</span></label>
+            <label class="chip"><input type="radio" name="Stil litere" value="Decide tu" /><span>Decide tu</span></label>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- ============ PASUL 6 · TEHNIC & PRACTIC ============ -->
+      <fieldset class="panel step" data-step="6" hidden>
+        <legend>Ultimele detalii</legend>
+        <p class="step-intro">Câteva lucruri practice și gata.</p>
+
+        <div class="field">
+          <label class="q" for="pagini">Paginile standard sunt Acasă, Servicii, Despre mine și Contact. Vrei ceva în plus?</label>
+          <input type="text" id="pagini" name="Pagini extra" placeholder="ex. Prețuri, Resurse… (opțional)" />
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <span class="q">Vrei hartă cu locația cabinetului?</span>
+            <div class="chips" role="radiogroup" aria-label="Hartă">
+              <label class="chip"><input type="radio" name="Hartă" value="Da" /><span>Da</span></label>
+              <label class="chip"><input type="radio" name="Hartă" value="Nu" /><span>Nu</span></label>
+              <label class="chip"><input type="radio" name="Hartă" value="Lucrez doar online" /><span>Doar online</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label class="q" for="program">Program de lucru</label>
+            <input type="text" id="program" name="Program" placeholder="ex. Luni–Vineri, 10–18 (opțional)" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="q" for="social">Rețele sociale de legat</label>
+          <input type="text" id="social" name="Social media" placeholder="Instagram, Facebook… (opțional)" />
+        </div>
+
+        <div class="field">
+          <span class="q">Până când ai vrea site-ul gata?</span>
+          <div class="chips" role="radiogroup" aria-label="Termen">
+            <label class="chip"><input type="radio" name="Termen" value="Cât mai repede" /><span>Cât mai repede</span></label>
+            <label class="chip"><input type="radio" name="Termen" value="În 2–4 săptămâni" /><span>În 2–4 săptămâni</span></label>
+            <label class="chip"><input type="radio" name="Termen" value="Nu mă grăbesc" /><span>Nu mă grăbesc</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="q" for="altceva">Mai e ceva important ce ar trebui să știu?</label>
+          <textarea id="altceva" name="Altceva"></textarea>
+        </div>
+      </fieldset>
+
+      <!-- Mesaj de eroare (populează JS) -->
+      <p class="msg err" id="formErr" role="alert" hidden>Ceva n-a mers la trimitere. Mai încearcă o dată, sau scrie-mi direct pe WhatsApp.</p>
+
+      <!-- Navigație pași -->
+      <div class="nav" id="nav" hidden>
+        <button type="button" class="btn btn-ghost" id="backBtn">← Înapoi</button>
+        <div class="spacer"></div>
+        <button type="button" class="btn btn-primary" id="nextBtn">Continuă <span aria-hidden="true">→</span></button>
+        <button type="submit" class="btn btn-primary" id="submitBtn" hidden>Trimite răspunsurile</button>
+      </div>
+
+      <!-- ============ ECRAN FINAL (după trimitere) ============ -->
+      <div class="done" id="done" hidden>
+        <div class="mark" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5 11-12"/></svg>
+        </div>
+        <h2>Gata — mulțumesc! <span class="accent">🌿</span></h2>
+        <p>Am primit răspunsurile tale. Mă uit peste ele și îți scriu în curând cu următorii pași și o primă schiță.</p>
+        <!-- [PERSONALIZEAZĂ · WHATSAPP] -->
+        <a class="btn btn-primary" href="https://wa.me/40723030195" target="_blank" rel="noopener">Scrie-mi pe WhatsApp</a>
+      </div>
+    </form>
+
+    <p class="footnote">Datele tale rămân între noi. Le folosesc doar ca să-ți construiesc site-ul.</p>
+  </div>
+
+  <!--
+    =====================================================================
+    CUM CONECTEZI FORMULARUL (ca să-ți vină răspunsurile pe email):
+      1. Cont gratuit pe https://formspree.io → „New form" → pune emailul tău.
+      2. Primești un endpoint:  https://formspree.io/f/xxxxxxx
+      3. [PERSONALIZEAZĂ · FORMSPREE] Înlocuiește mai sus, în <form action="...">,
+         textul  AICI_ENDPOINT_FORMSPREE  cu codul tău (xxxxxxx).
+      4. La primul mesaj, Formspree îți cere o confirmare pe email. Gata.
+
+    În emailul primit vei găsi, primul, câmpul „Brief pentru AI" — e un text
+    structurat, gata de copiat și lipit în AI pentru a genera site-ul.
+
+    FALLBACK: cât timp NU ai pus endpoint-ul (rămâne „AICI_ENDPOINT_FORMSPREE"),
+    la trimitere se deschide automat emailul (mailto) cu brieful completat, către
+    adresa de mai jos — deci formularul funcționează și neconfigurat.
+    =====================================================================
+  -->
+  <script>
+    (function () {
+      "use strict";
+      // [PERSONALIZEAZĂ · EMAIL] adresa pe care pică fallback-ul mailto înainte de Formspree
+      var FALLBACK_EMAIL = "toroscarol@gmail.com";
+
+      var form = document.getElementById("briefForm");
+      var TOTAL = 6;
+      var current = 0; // 0 = ecran de bun venit
+
+      var welcome = document.getElementById("welcome");
+      var steps = Array.prototype.slice.call(form.querySelectorAll(".step"));
+      var nav = document.getElementById("nav");
+      var backBtn = document.getElementById("backBtn");
+      var nextBtn = document.getElementById("nextBtn");
+      var submitBtn = document.getElementById("submitBtn");
+      var progressWrap = document.getElementById("progressWrap");
+      var progressBar = document.getElementById("progressBar");
+      var progressLabel = document.getElementById("progressLabel");
+      var errBox = document.getElementById("formErr");
+
+      function show(step) {
+        current = step;
+        welcome.hidden = step !== 0;
+        steps.forEach(function (s) { s.hidden = Number(s.dataset.step) !== step; });
+        var inStep = step >= 1 && step <= TOTAL;
+        nav.hidden = !inStep;
+        progressWrap.hidden = !inStep;
+        document.getElementById("done").hidden = true;
+        if (inStep) {
+          backBtn.style.visibility = step === 1 ? "hidden" : "visible";
+          var last = step === TOTAL;
+          nextBtn.hidden = last;
+          submitBtn.hidden = !last;
+          progressBar.style.width = (step / TOTAL * 100) + "%";
+          progressLabel.textContent = "Pasul " + step + " din " + TOTAL;
+        }
+        // scroll sus la schimbarea pasului
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        // focus pe primul câmp al pasului (accesibilitate)
+        var first = steps[step - 1] && steps[step - 1].querySelector("input,select,textarea");
+        if (first) { try { first.focus({ preventScroll: true }); } catch (e) {} }
+      }
+
+      // Validează câmpurile obligatorii din pasul curent
+      function validStep(step) {
+        var panel = steps[step - 1];
+        if (!panel) return true;
+        var required = panel.querySelectorAll("[required]");
+        var ok = true, firstBad = null;
+        required.forEach(function (el) {
+          el.classList.remove("invalid");
+          if (!el.value || (el.type === "email" && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(el.value))) {
+            el.classList.add("invalid");
+            if (!firstBad) firstBad = el;
+            ok = false;
+          }
+        });
+        if (!ok && firstBad) firstBad.focus();
+        return ok;
+      }
+
+      // Butoane „Începe" / navigare
+      form.addEventListener("click", function (e) {
+        var go = e.target.closest("[data-go]");
+        if (go) { show(Number(go.dataset.go)); }
+      });
+      nextBtn.addEventListener("click", function () {
+        if (validStep(current)) show(current + 1);
+      });
+      backBtn.addEventListener("click", function () { show(current - 1); });
+
+      // ---- Compilează BRIEFUL din răspunsuri ----
+      function v(name) {
+        var multi = form.querySelectorAll('input[type="checkbox"][name="' + cssEsc(name) + '"]:checked');
+        if (multi.length) return Array.prototype.map.call(multi, function (c) { return c.value; }).join(", ");
+        var el = form.querySelector('[name="' + cssEsc(name) + '"]');
+        if (!el) return "";
+        if (el.type === "radio") {
+          var r = form.querySelector('input[name="' + cssEsc(name) + '"]:checked');
+          return r ? r.value : "";
+        }
+        return (el.value || "").trim();
+      }
+      function cssEsc(s) { return s.replace(/"/g, '\\"'); }
+      function line(label, name) { var val = v(name); return "- " + label + ": " + (val || "—"); }
+
+      function buildBrief() {
+        var nume = v("Nume") || "(fără nume)";
+        var L = [
+          "BRIEF SITE DE PREZENTARE — " + nume,
+          "(generat din formularul de intake · " + new Date().toLocaleDateString("ro-RO") + ")",
+          "",
+          "■ CINE E CLIENTUL",
+          line("Nume", "Nume"),
+          line("Titulatură", "Titulatură"),
+          line("Oraș", "Oraș"),
+          line("Mod de lucru", "Mod de lucru"),
+          line("Experiență", "Experiență"),
+          "- Contact: " + (v("Email") || "—") + " · " + (v("Telefon") || "—"),
+          line("Domeniu dorit", "Domeniu dorit"),
+          "",
+          "■ DESPRE (pagina „Despre mine”)",
+          line("Formare / abordare", "Formare / abordare"),
+          line("Poveste / motivație", "Poveste / motivație"),
+          line("Stil relațional", "Stil relațional"),
+          line("Diferențiator", "Diferențiator"),
+          "",
+          "■ SERVICII",
+          line("Lucrează cu", "Lucrează cu"),
+          "- Teme: " + ([v("Teme"), v("Alte teme")].filter(Boolean).join(", ") || "—"),
+          line("Format ședințe", "Format ședințe"),
+          "- Preț: " + (v("Preț ședință") || "—") + " (afișat pe site: " + (v("Afișare preț") || "—") + ")",
+          line("Primă ședință", "Primă ședință"),
+          line("Preferință contact", "Preferință contact"),
+          "",
+          "■ TON & MESAJ",
+          line("Senzație dorită", "Senzație dorită"),
+          line("Ton", "Ton"),
+          line("Adresare", "Adresare"),
+          line("Mesaj cheie", "Mesaj cheie"),
+          line("Îndemn principal", "Îndemn principal"),
+          line("Cuvinte de folosit / evitat", "Cuvinte de folosit / evitat"),
+          "- Are texte: " + (v("Are texte") || "—"),
+          (v("Texte existente (lipite)") ? "- Texte lipite:\n" + v("Texte existente (lipite)") : "- Texte lipite: —"),
+          "",
+          "■ DESIGN",
+          line("Atmosferă", "Atmosferă"),
+          "- Culori: " + (v("Culori preferate") || "—") + " (de evitat: " + (v("Culori de evitat") || "—") + ")",
+          line("Referințe", "Referințe design"),
+          line("Logo", "Logo"),
+          line("Poze", "Poze"),
+          line("Stil litere", "Stil litere"),
+          "",
+          "■ TEHNIC & PRACTIC",
+          line("Pagini extra", "Pagini extra"),
+          line("Hartă", "Hartă"),
+          line("Program", "Program"),
+          line("Social media", "Social media"),
+          line("Termen", "Termen"),
+          line("Altceva", "Altceva")
+        ];
+        return L.join("\n");
+      }
+
+      // ---- Trimitere ----
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        errBox.hidden = true;
+        if (!validStep(TOTAL)) return; // (pasul 6 n-are obligatorii, dar pentru siguranță)
+
+        var brief = buildBrief();
+        document.getElementById("briefField").value = brief;
+        document.getElementById("subjectField").value = "Brief site nou — " + (v("Nume") || "client");
+
+        var action = form.getAttribute("action") || "";
+        var notConfigured = action.indexOf("AICI_ENDPOINT_FORMSPREE") !== -1;
+
+        // FALLBACK mailto (Formspree neconfigurat) → deschide emailul cu brieful
+        if (notConfigured) {
+          var subj = encodeURIComponent("Brief site nou — " + (v("Nume") || "client"));
+          var body = encodeURIComponent(brief);
+          window.location.href = "mailto:" + FALLBACK_EMAIL + "?subject=" + subj + "&body=" + body;
+          setTimeout(finish, 400);
+          return;
+        }
+
+        // Formspree (AJAX)
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Se trimite…";
+        fetch(action, { method: "POST", body: new FormData(form), headers: { Accept: "application/json" } })
+          .then(function (res) {
+            if (res.ok) { finish(); }
+            else { throw new Error("bad response"); }
+          })
+          .catch(function () {
+            errBox.hidden = false;
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Trimite răspunsurile";
+          });
+      });
+
+      function finish() {
+        welcome.hidden = true;
+        steps.forEach(function (s) { s.hidden = true; });
+        nav.hidden = true;
+        progressWrap.hidden = true;
+        errBox.hidden = true;
+        document.getElementById("done").hidden = false;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      // start
+      show(0);
+    })();
+  </script>
+</body>
+</html>
